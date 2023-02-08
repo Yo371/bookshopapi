@@ -38,7 +38,7 @@ public class ValidationRole : BaseTest
     }
     
     [Test]
-    public void VerifyCustomerCanNotGetAnyProfile()
+    public void VerifyCustomerCanNotGetAnyOtherProfile()
     {
         var user = _userService.GetUser(2, Role.Customer.ToString(), "1");
         
