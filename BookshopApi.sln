@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookshopApi", "BookshopApi\BookshopApi.csproj", "{455C7BC9-9F10-49F6-94B9-BD9B37A8BA31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{8B425E7B-EA5D-4013-AC5F-AFD38873A579}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{455C7BC9-9F10-49F6-94B9-BD9B37A8BA31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{455C7BC9-9F10-49F6-94B9-BD9B37A8BA31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{455C7BC9-9F10-49F6-94B9-BD9B37A8BA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{455C7BC9-9F10-49F6-94B9-BD9B37A8BA31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B425E7B-EA5D-4013-AC5F-AFD38873A579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B425E7B-EA5D-4013-AC5F-AFD38873A579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B425E7B-EA5D-4013-AC5F-AFD38873A579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B425E7B-EA5D-4013-AC5F-AFD38873A579}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
