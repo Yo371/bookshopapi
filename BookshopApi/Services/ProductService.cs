@@ -2,20 +2,21 @@
 using BookshopApi.Entities;
 using BookshopApi.Models;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookshopApi.Services;
 
 public interface IProductService
 {
-    IEnumerable<Product> GetAllProducts();
+    Task<IEnumerable<Product>> GetAllProducts();
 
-    Product GetProduct(int id);
+    Task<Product> GetProduct(int id);
 
-    void UpdateProduct(Product productEntity);
+    Task UpdateProduct(Product productEntity);
 
-    void CreateProduct(Product productEntity);
+    Task<bool> CreateProduct(Product productEntity);
 
-    void DeleteProduct(int id);
+    Task<bool> DeleteProduct(int id);
 }
 
 public class ProductService : IProductService
@@ -24,39 +25,77 @@ public class ProductService : IProductService
     
     public ProductService(BookShopContext context)
     {
-        _context = context;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public IEnumerable<Product> GetAllProducts()
+    public async Task<IEnumerable<Product>> GetAllProducts()
     {
-        return _context.Products.Select(e => e.Adapt<Product>()).ToList();
+        try
+        {
+            return await _context.Products.Select(e => e.Adapt<Product>()).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while retrieving all products.", ex);
+        }
     }
     
-    public Product GetProduct(int id)
+    public async Task<Product> GetProduct(int id)
     {
-        return _context.Products.Find(id).Adapt<Product>();
+        try
+        {
+            var productEntity = await _context.Products.FindAsync(id);
+            return productEntity.Adapt<Product>();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"An error occurred while retrieving the product with ID {id}.", ex);
+        }
     }
 
 
-    public void UpdateProduct(Product productEntity)
+    public async Task UpdateProduct(Product productEntity)
     {
-        var product = productEntity.Adapt<ProductEntity>();
-        _context.Products.Update(product);
-        _context.SaveChanges();
+        try
+        {
+            var product = productEntity.Adapt<ProductEntity>();
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while updating product.", ex);
+        }
     }
     
-    public void CreateProduct(Product product)
+    public async Task<bool> CreateProduct(Product product)
     {
-        var productEntity = product.Adapt<ProductEntity>();
-        _context.Products.Add(productEntity);
-        _context.SaveChanges();
-        product.Id = productEntity.Id;
+        try
+        {
+            var productEntity = product.Adapt<ProductEntity>();
+            _context.Products.Add(productEntity);
+            await _context.SaveChangesAsync();
+            product.Id = productEntity.Id;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while creating product.", ex);
+        }
     }
     
-    public void DeleteProduct(int id)
+    public async Task<bool> DeleteProduct(int id)
     {
-        _context.Products.Remove(_context.Products.Find(id));
-        _context.SaveChanges();
+        try
+        {
+            _context.Products.Remove(_context.Products.Find(id));
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while deleting product.", ex);
+        }
     }
 }
 

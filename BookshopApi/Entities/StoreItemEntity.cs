@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookshopApi.Entities;
 
 [Table("Book_store")]
 public class StoreItemEntity
 {
+    [Key]
     public int Id { get; set; }
 
     [ForeignKey("product_id")]

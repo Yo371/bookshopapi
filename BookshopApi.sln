@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookshopApi", "BookshopApi\BookshopApi.csproj", "{455C7BC9-9F10-49F6-94B9-BD9B37A8BA31}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookshopApi", "BookshopApi\BookshopApi.csproj", "{455C7BC9-9F10-49F6-94B9-BD9B37A8BA31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{8B425E7B-EA5D-4013-AC5F-AFD38873A579}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{8B425E7B-EA5D-4013-AC5F-AFD38873A579}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookshopUi", "BookshopUi\BookshopUi.csproj", "{E90A24BF-46AD-4382-899C-08680A3D2FD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +23,15 @@ Global
 		{8B425E7B-EA5D-4013-AC5F-AFD38873A579}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B425E7B-EA5D-4013-AC5F-AFD38873A579}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B425E7B-EA5D-4013-AC5F-AFD38873A579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E90A24BF-46AD-4382-899C-08680A3D2FD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E90A24BF-46AD-4382-899C-08680A3D2FD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E90A24BF-46AD-4382-899C-08680A3D2FD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E90A24BF-46AD-4382-899C-08680A3D2FD8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3010EC3A-B9CC-4844-BA6B-4A20D18F87CF}
 	EndGlobalSection
 EndGlobal

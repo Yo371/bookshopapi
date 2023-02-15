@@ -1,32 +1,52 @@
 ﻿using System.Net;
+using BookshopApi.Models;
 
 namespace Tests.ApiTests;
 
 public class Products : BaseTest
 {
+    private Product _product;
+    
+    [OneTimeSetUp]
+    public void SetUp()
+    {
+        _product = new Product()
+        {
+            Name = "Name",
+            Description = "Description",
+            Author = "Author",
+            ImagePath = "Path",
+            Price = 12,
+        };
+    }
+    
     [Test, Order(1)]
     public void VerifyCreatingNewProduct()
     {
-        Assert.That(ProductApiService.PostProduct(Product).StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var response = ProductApiService.PostProduct(_product);
+        Assert.That(response.IsSuccessful, Is.True);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
     }
     
     [Test, Order(2)]
     public void VerifyGettingCreatedProduct()
     {
-        Assert.That(ProductApiService.GetProduct(Product.Id), Is.EqualTo(Product));
+        Assert.That(ProductApiService.GetProduct(_product.Id), Is.EqualTo(_product));
     }
     
     [Test, Order(3)]
     public void VerifyUpdatingExistedProduct()
     {
-        Product.Name = "Updated";
-        Assert.That(ProductApiService.UpdateProduct(Product).StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(ProductApiService.GetProduct(Product.Id), Is.EqualTo(Product));
+        _product.Name = "Updated";
+        Assert.That(ProductApiService.UpdateProduct(_product).IsSuccessful, Is.True);
+        Assert.That(ProductApiService.GetProduct(_product.Id), Is.EqualTo(_product));
     }
     
     [Test, Order(4)]
     public void VerifyDeletingExistedProduct()
     {
-        Assert.That(ProductApiService.DeleteProduct(Product.Id).StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        var response = ProductApiService.DeleteProduct(_product.Id);
+        Assert.That(response.IsSuccessful, Is.True);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
     }
 }

@@ -22,71 +22,119 @@ public class UserController : Controller
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
     [Authorize(Roles = "Admin")]
     [Route("api/users/")]
-    public IEnumerable<User> GetAllUser()
+    public async Task<ActionResult<IEnumerable<User>>> GetAllUser()
     {
-        return _userService.GetAllUsers();
+        try
+        {
+            var users = await _userService.GetAllUsers();
+            return Ok(users);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while getting the users.");
+        }
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(User))]
     [Authorize(Roles = "Admin,Customer")]
     [Route("api/users/{id:int}")]
-    public User GetUser(int id)
+    public async Task<ActionResult<User>> GetUser(int id)
     {
         var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
         var role = User.FindFirstValue(ClaimTypes.Role);
 
-        var user = _userService.GetUser(id, role, loggedId);
-
-        return user ?? throw new BadHttpRequestException("Role is not allowed to perform request", 400);
+        try
+        {
+            var user = await _userService.GetUser(id, role, loggedId);
+            return user != null ? Ok(user) : StatusCode(403, "The user is not allowed to perform this action.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while getting the user.");
+        }
     }
 
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(User))]
     [Authorize(Roles = "Admin,Customer")]
     [Route("api/users")]
-    public void UpdateUser([FromBody]User user)
+    public async Task<ActionResult> UpdateUser([FromBody]User user)
     {
         var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
         var role = User.FindFirstValue(ClaimTypes.Role);
 
-        var isUpdated = _userService.UpdateUser(user, role, loggedId);
-        
-        if(!isUpdated) throw new BadHttpRequestException("Role is not allowed to perform request", 400);
+        try
+        {
+            var isUpdated = await _userService.UpdateUser(user, role, loggedId);
+            
+            return isUpdated
+                ? StatusCode(StatusCodes.Status202Accepted, "The user updated.")
+                : StatusCode(403, "The user is not allowed to perform this action.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while updating the user.");
+        }
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(User))]
     [Route("api/users")]
-    public User CreateUser([FromBody]User user)
+    public async Task<ActionResult<User>> CreateUser([FromBody]User user)
     {
-        if (HttpContext.User.Identity.IsAuthenticated)
+        try
         {
-            if (User.IsInRole("Admin"))
+            if (HttpContext.User.Identity.IsAuthenticated)
             {
-                _userService.CreateUser(user);
-                return user;
+                if (User.IsInRole("Admin"))
+                {
+                    await _userService.CreateUser(user);
+                    return  StatusCode(StatusCodes.Status201Created, user);
+                }
             }
-            else
-            {
-                throw new BadHttpRequestException("Role is not allowed to perform request", 400);
-            }
-        }
-        user.Auth.Role = Role.Customer;
-        _userService.CreateUser(user);
 
-        return user;
+            user.Auth.Role = Role.Customer; 
+            await _userService.CreateUser(user);
+
+            return  StatusCode(StatusCodes.Status201Created, user);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while creating the user.");
+        }
     }
 
     [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(User))]
     [Authorize(Roles = "Admin,Customer")]
     [Route("api/users/{id:int}")]
-    public void DeleteUser(int id)
+    public async Task<ActionResult> DeleteUser(int id)
     {
         var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
         var role = User.FindFirstValue(ClaimTypes.Role);
-        
-        var isDeleted = _userService.DeleteUser(id, role, loggedId);
-        
-        if(!isDeleted) throw new BadHttpRequestException("Role is not allowed to perform request", 400);
+
+        try
+        {
+            bool isDeleted = await _userService.DeleteUser(id, role, loggedId);
+            
+            return isDeleted ? NoContent() : StatusCode(403, "The user is not allowed to perform this action.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while deleting the user.");
+        }
     }
 }

@@ -20,64 +20,116 @@ public class BookingController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
     [Authorize(Roles = "Manager")]
     [Route("api/bookings/")]
-    public IEnumerable<Booking> GetAllBookings()
+    public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings()
     {
-        return _bookingService.GetAllBookings();
+        try
+        {
+            var bookings = await _bookingService.GetAllBookingsAsync();
+            return Ok(bookings);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while getting the booking.");
+        }
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Booking))]
     [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings/{id}")]
-    public Booking GetBooking(int id)
+    public async Task<ActionResult<Booking>> GetBooking(int id)
     {
         var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
         var role = User.FindFirstValue(ClaimTypes.Role);
-        
-        var booking = _bookingService.GetBooking(id, role, loggedId);
 
-        return booking ?? throw new BadHttpRequestException("Role is not allowed to perform request", 400);
+        try
+        {
+            var booking = await _bookingService.GetBooking(id, role, loggedId);
+
+            return booking != null ? Ok(booking) : StatusCode(403, "The user is not allowed to perform this action.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while getting the booking.");
+        }
     }
 
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Booking))]
     [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings")]
-    public void UpdateBooking([FromBody]Booking bookingEntity)
+    public async Task<ActionResult> UpdateBooking([FromBody] Booking bookingEntity)
     {
         var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
         var role = User.FindFirstValue(ClaimTypes.Role);
 
-        var isUpdated = _bookingService.UpdateBooking(bookingEntity, role, loggedId);
-        
-        if(!isUpdated) throw new BadHttpRequestException("Role is not allowed to perform request", 400);
+        try
+        {
+            var isUpdated = await _bookingService.UpdateBooking(bookingEntity, role, loggedId);
+
+            return isUpdated
+                ? StatusCode(StatusCodes.Status202Accepted, "The booking updated.")
+                : StatusCode(403, "The user is not allowed to perform this action.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while creating the booking.");
+        }
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Booking))]
     [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings")]
-    public Booking CreateBooking([FromBody]Booking booking)
+    public async Task<ActionResult<Booking>> CreateBooking([FromBody] Booking booking)
     {
         var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
         var role = User.FindFirstValue(ClaimTypes.Role);
-        
-        var isCreated = _bookingService.CreateBooking(booking, role, loggedId);
-        
-        if(!isCreated) throw new BadHttpRequestException("Role is not allowed to perform request", 400);
 
-        return booking;
+        try
+        {
+            var isCreated = await _bookingService.CreateBooking(booking, role, loggedId);
+
+            return isCreated
+                ? StatusCode(StatusCodes.Status201Created, booking)
+                : StatusCode(403, "The user is not allowed to perform this action.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while creating the booking.");
+        }
     }
 
     [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Booking))]
     [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings/{id:int}")]
-    public void DeleteBooking(int idOfBooking)
+    public async Task<ActionResult> DeleteBooking(int idOfBooking)
     {
         var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
         var role = User.FindFirstValue(ClaimTypes.Role);
-        
-        var isCreated = _bookingService.DeleteBooking(idOfBooking, role, loggedId);
-        
-        if(!isCreated) throw new BadHttpRequestException("Role is not allowed to perform request", 400);
+
+        try
+        {
+            bool isDeleted = await _bookingService.DeleteBooking(idOfBooking, role, loggedId);
+
+            return isDeleted ? NoContent() : StatusCode(403, "The user is not allowed to perform this action.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while deleting the booking.");
+        }
     }
 }

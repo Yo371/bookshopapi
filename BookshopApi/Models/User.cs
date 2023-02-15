@@ -1,4 +1,7 @@
-﻿namespace BookshopApi.Models;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace BookshopApi.Models;
 
 public class User
 {
@@ -20,7 +23,7 @@ public class User
 
     protected bool Equals(User other)
     {
-        return Id == other.Id && Name == other.Name && Auth.Equals(other.Auth) && Email == other.Email && Phone.Equals(other.Phone) && Address == other.Address && Login == other.Login && Password == other.Password;
+        return Id == other.Id && Name == other.Name && Auth.Equals(other.Auth) && Email == other.Email && Phone.Equals(other.Phone) && Address == other.Address && Login == other.Login;
     }
 
     public override bool Equals(object? obj)

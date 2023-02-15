@@ -8,15 +8,15 @@ namespace BookshopApi.Services;
 
 public interface IStoreItemService
 {
-    IEnumerable<Store> GetAllStoreItems();
+    Task<IEnumerable<Store>> GetAllStoreItems();
 
-    Store GetStoreItem(int id);
+    Task<Store> GetStoreItem(int id);
 
-    void UpdateStoreItem(Store storeItemsEntity);
+    Task UpdateStoreItem(Store storeItemsEntity);
 
-    void CreateStoreItem(Store storeItemsEntity);
+    Task CreateStoreItem(Store storeItemsEntity);
 
-    void DeleteStoreItem(int id);
+    Task DeleteStoreItem(int id);
 }
 
 public class StoreItemService : IStoreItemService
@@ -25,41 +25,77 @@ public class StoreItemService : IStoreItemService
 
     public StoreItemService(BookShopContext context)
     {
-        _context = context;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
     }
     
-    public IEnumerable<Store> GetAllStoreItems()
+    public async Task<IEnumerable<Store>> GetAllStoreItems()
     {
-        return _context.StoreItems.Include(p => p.Product).Select(p => p.Adapt<Store>()).ToList();
+        try
+        {
+            return await _context.StoreItems.Include(p => p.Product).Select(p => p.Adapt<Store>()).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while retrieving all store items.", ex);
+        }
     }
     
-    public Store GetStoreItem(int id)
+    public async Task<Store> GetStoreItem(int id)
     {
-        return _context.StoreItems.Include(p => p.Product).First(e => e.Id == id).Adapt<Store>();
+        try
+        {
+            return (await _context.StoreItems.Include(p => p.Product).FirstOrDefaultAsync(e => e.Id == id))
+                .Adapt<Store>();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"An error occurred while retrieving the store item with ID {id}.", ex);
+        }
     }
     
-    public void UpdateStoreItem(Store storeItem)
+    public async Task UpdateStoreItem(Store storeItem)
     {
-        var storeItemsEntity = storeItem.Adapt<StoreItemEntity>();
-        var product = _context.Products.First(e => e.Id == storeItemsEntity.Product.Id);
-        storeItemsEntity.Product = product;
-        _context.StoreItems.Update(storeItemsEntity);
-        _context.SaveChanges();
+        try
+        {
+            var storeItemsEntity = storeItem.Adapt<StoreItemEntity>();
+            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == storeItemsEntity.Product.Id);
+            storeItemsEntity.Product = product;
+            _context.StoreItems.Update(storeItemsEntity);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while updatinh store item.", ex);
+        }
     }
     
-    public void CreateStoreItem(Store storeItem)
+    public async Task CreateStoreItem(Store storeItem)
     {
-        var storeItemsEntity = storeItem.Adapt<StoreItemEntity>();
-        var product = _context.Products.First(e => e.Id == storeItemsEntity.Product.Id);
-        storeItemsEntity.Product = product;
-        _context.StoreItems.Add(storeItemsEntity);
-        _context.SaveChanges();
+        try
+        {
+            var storeItemsEntity = storeItem.Adapt<StoreItemEntity>();
+            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == storeItemsEntity.Product.Id);
+            storeItemsEntity.Product = product;
+            _context.StoreItems.Add(storeItemsEntity);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while creating store item.", ex);
+        }
     }
     
-    public void DeleteStoreItem(int id)
+    public async Task DeleteStoreItem(int id)
     {
-        _context.StoreItems.Remove(_context.StoreItems.Find(id));
-        _context.SaveChanges();
+        try
+        {
+            _context.StoreItems.Remove(_context.StoreItems.Find(id));
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while deleting store item.", ex);
+        }
     }
 }
 

@@ -26,7 +26,6 @@ builder.Services.AddScoped<IStoreItemService, StoreItemService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddMvc().AddJsonOptions(opts =>
 {

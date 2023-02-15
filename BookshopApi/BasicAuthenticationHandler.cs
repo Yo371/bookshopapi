@@ -33,28 +33,32 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader.Parameter)).Split(':');
             username = credentials.FirstOrDefault();
             var password = credentials.LastOrDefault();
-            userValidModel = _userService.GetValidatedUser(username, password);
-            
+            userValidModel = await _userService.GetValidatedUser(username, password);
+
             if (!userValidModel.IsCredentialsMatched)
             {
-                throw new AggregateException("Invalid username or password");
+                throw new InvalidOperationException("Invalid username or password");
             }
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, userValidModel.Role.ToString()),
+                new Claim(ClaimTypes.SerialNumber, userValidModel.Id.ToString())
+            };
+            var identity = new ClaimsIdentity(claims, Scheme.Name);
+            var principal = new ClaimsPrincipal(identity);
+            var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+            return AuthenticateResult.Success(ticket);
         }
-        catch (Exception ex)
+        catch (FormatException ex)
+        {
+            return AuthenticateResult.Fail("Invalid authorization header format");
+        }
+        catch (InvalidOperationException ex)
         {
             return AuthenticateResult.Fail(ex.Message);
         }
-
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, userValidModel.Role.ToString()),
-            new Claim(ClaimTypes.SerialNumber, userValidModel.Id.ToString())
-        };
-        var identity = new ClaimsIdentity(claims, Scheme.Name);
-        var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, Scheme.Name);
-
-        return AuthenticateResult.Success(ticket);
     }
 }

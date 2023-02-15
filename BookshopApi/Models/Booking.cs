@@ -8,7 +8,7 @@ public class Booking
     
     public ProductEntity ProductEntity { get; set; }
     
-    public UserEntity UserEntity { get; set; }
+    public User UserEntity { get; set; }
     
     public string DeliveryAddress { get; set; }
     

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BookshopApi.Models;
 
 namespace BookshopApi.Entities;
@@ -6,6 +7,7 @@ namespace BookshopApi.Entities;
 [Table("Bookings")]
 public class BookingEntity
 {
+    [Key]
     public int Id { get; set; }
     
     [ForeignKey("product_id")]
@@ -17,6 +19,7 @@ public class BookingEntity
     [Column("delivery_address")]
     public string DeliveryAddress { get; set; }
     
+    [DisplayFormat(DataFormatString = "{yyyy-mm-dd}")]
     [Column("delivery_date")]
     public DateTime DeliveryDate { get; set; }
     

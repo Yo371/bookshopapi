@@ -20,45 +20,93 @@ namespace BookshopApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
         [Authorize(Roles = "Manager,Customer")]
         [Route("api/products/")]
-        public IEnumerable<Product> GetAllProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
         {
-            return _productService.GetAllProducts();
+            try
+            {
+                return Ok(await _productService.GetAllProducts());
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while getting the products.");
+            }
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
         [Authorize(Roles = "Manager,Customer")]
         [Route("api/products/{id}")]
-        public Product GetProduct(int id)
+        public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return _productService.GetProduct(id);
+            try
+            {
+                var product = await _productService.GetProduct(id);
+                return Ok(product);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while getting the product.");
+            }
         }
 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
         [Authorize(Roles = "Manager")]
         [Route("api/products")]
-        public void UpdateProduct([FromBody]Product product)
+        public async Task<ActionResult> UpdateProduct([FromBody] Product product)
         {
-            _productService.UpdateProduct(product);
+            try
+            {
+                await _productService.UpdateProduct(product);
+                return StatusCode(StatusCodes.Status202Accepted, "The product updated.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while updating the product.");
+            }
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
         [Authorize(Roles = "Manager")]
         [Route("api/products")]
-        public Product CreateProduct([FromBody]Product product)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
         {
-            _productService.CreateProduct(product);
+            try
+            {
+                await _productService.CreateProduct(product);
 
-            return product;
+                return StatusCode(StatusCodes.Status201Created, product);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while creating the product.");
+            }
         }
 
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
         [Authorize(Roles = "Manager")]
         [Route("api/products/{id:int}")]
-        public void DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            _productService.DeleteProduct(id);
+            try
+            {
+                await _productService.DeleteProduct(id);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while deleting the product.");
+            }
         }
     }
 }
