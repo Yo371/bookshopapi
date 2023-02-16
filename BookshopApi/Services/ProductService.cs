@@ -8,15 +8,15 @@ namespace BookshopApi.Services;
 
 public interface IProductService
 {
-    Task<IEnumerable<Product>> GetAllProducts();
+    Task<IEnumerable<Product>> GetAllProductsAsync();
 
-    Task<Product> GetProduct(int id);
+    Task<Product> GetProductAsync(int id);
 
-    Task UpdateProduct(Product productEntity);
+    Task UpdateProductAsync(Product productEntity);
 
-    Task<bool> CreateProduct(Product productEntity);
+    Task<bool> CreateProductAsync(Product productEntity);
 
-    Task<bool> DeleteProduct(int id);
+    Task<bool> DeleteProductAsync(int id);
 }
 
 public class ProductService : IProductService
@@ -28,7 +28,7 @@ public class ProductService : IProductService
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<IEnumerable<Product>> GetAllProducts()
+    public async Task<IEnumerable<Product>> GetAllProductsAsync()
     {
         try
         {
@@ -40,7 +40,7 @@ public class ProductService : IProductService
         }
     }
     
-    public async Task<Product> GetProduct(int id)
+    public async Task<Product> GetProductAsync(int id)
     {
         try
         {
@@ -54,7 +54,7 @@ public class ProductService : IProductService
     }
 
 
-    public async Task UpdateProduct(Product productEntity)
+    public async Task UpdateProductAsync(Product productEntity)
     {
         try
         {
@@ -68,7 +68,7 @@ public class ProductService : IProductService
         }
     }
     
-    public async Task<bool> CreateProduct(Product product)
+    public async Task<bool> CreateProductAsync(Product product)
     {
         try
         {
@@ -84,7 +84,7 @@ public class ProductService : IProductService
         }
     }
     
-    public async Task<bool> DeleteProduct(int id)
+    public async Task<bool> DeleteProductAsync(int id)
     {
         try
         {

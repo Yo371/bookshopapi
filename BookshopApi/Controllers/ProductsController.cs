@@ -28,7 +28,7 @@ namespace BookshopApi.Controllers
         {
             try
             {
-                return Ok(await _productService.GetAllProducts());
+                return Ok(await _productService.GetAllProductsAsync());
             }
             catch (Exception)
             {
@@ -45,7 +45,7 @@ namespace BookshopApi.Controllers
         {
             try
             {
-                var product = await _productService.GetProduct(id);
+                var product = await _productService.GetProductAsync(id);
                 return Ok(product);
             }
             catch (Exception)
@@ -63,7 +63,7 @@ namespace BookshopApi.Controllers
         {
             try
             {
-                await _productService.UpdateProduct(product);
+                await _productService.UpdateProductAsync(product);
                 return StatusCode(StatusCodes.Status202Accepted, "The product updated.");
             }
             catch (Exception)
@@ -81,7 +81,7 @@ namespace BookshopApi.Controllers
         {
             try
             {
-                await _productService.CreateProduct(product);
+                await _productService.CreateProductAsync(product);
 
                 return StatusCode(StatusCodes.Status201Created, product);
             }
@@ -100,7 +100,7 @@ namespace BookshopApi.Controllers
         {
             try
             {
-                await _productService.DeleteProduct(id);
+                await _productService.DeleteProductAsync(id);
                 return NoContent();
             }
             catch (Exception)

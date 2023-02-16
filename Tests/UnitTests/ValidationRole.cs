@@ -16,7 +16,7 @@ public class ValidationRole : BaseTest
     [Test]
     public void VerifyAdminCanGetAnyUser()
     {
-        var user = _userService.GetUser(2, Role.Admin.ToString(), "1");
+        var user = _userService.GetUserAsync(2, Role.Admin.ToString(), "1");
         
         Assert.That(user, Is.Not.Null);
     }
@@ -24,7 +24,7 @@ public class ValidationRole : BaseTest
     [Test]
     public void VerifyAdminCanGetOwnProfile()
     {
-        var user = _userService.GetUser(1, Role.Admin.ToString(), "1");
+        var user = _userService.GetUserAsync(1, Role.Admin.ToString(), "1");
         
         Assert.That(user, Is.Not.Null);
     }
@@ -32,7 +32,7 @@ public class ValidationRole : BaseTest
     [Test]
     public void VerifyCustomerCanGetOwnProfile()
     {
-        var user = _userService.GetUser(1, Role.Customer.ToString(), "1");
+        var user = _userService.GetUserAsync(1, Role.Customer.ToString(), "1");
         
         Assert.That(user, Is.Not.Null);
     }
@@ -40,7 +40,7 @@ public class ValidationRole : BaseTest
     [Test]
     public void VerifyCustomerCanNotGetAnyOtherProfile()
     {
-        var user = _userService.GetUser(2, Role.Customer.ToString(), "1");
+        var user = _userService.GetUserAsync(2, Role.Customer.ToString(), "1");
         
         Assert.That(user, Is.Null);
     }

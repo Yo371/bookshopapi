@@ -10,23 +10,23 @@ namespace BookshopApi.Services;
 
 public interface IUserService
 {
-    Task<IEnumerable<User>> GetAllUsers();
+    Task<IEnumerable<User>> GetAllUsersAsync();
 
-    Task<User> GetUser(int id);
+    Task<User> GetUserAsync(int id);
 
-    Task<User> GetUser(int id, string role, string loggedId);
+    Task<User> GetUserAsync(int id, string role, string loggedId);
 
-    Task CreateUser(User user);
+    Task CreateUserAsync(User user);
 
-    Task UpdateUser(User user);
+    Task UpdateUserAsync(User user);
 
-    Task<bool> UpdateUser(User user, string role, string loggedId);
+    Task<bool> UpdateUserAsync(User user, string role, string loggedId);
 
-    Task DeleteUser(int id);
+    Task DeleteUserAsync(int id);
 
-    Task<bool> DeleteUser(int id, string role, string loggedId);
+    Task<bool> DeleteUserAsync(int id, string role, string loggedId);
 
-    Task<ValidationModel> GetValidatedUser(string login, string password);
+    Task<ValidationModel> GetValidatedUserAsync(string login, string password);
 }
 
 public class UserService : IUserService
@@ -40,7 +40,7 @@ public class UserService : IUserService
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<IEnumerable<User>> GetAllUsers()
+    public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
         try
         {
@@ -53,7 +53,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<User> GetUser(int id)
+    public async Task<User> GetUserAsync(int id)
     {
         try
         {
@@ -66,20 +66,20 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<User> GetUser(int id, string role, string loggedId)
+    public async Task<User> GetUserAsync(int id, string role, string loggedId)
     {
         if (role.Equals(CustomerRole))
         {
             if (loggedId.Equals(id.ToString()))
-                return await GetUser(id);
+                return await GetUserAsync(id);
             else
                 return null;
         }
 
-        return await GetUser(id);
+        return await GetUserAsync(id);
     }
 
-    public async Task CreateUser(User user)
+    public async Task CreateUserAsync(User user)
     {
         try
         {
@@ -108,7 +108,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task UpdateUser(User user)
+    public async Task UpdateUserAsync(User user)
     {
         try
         {
@@ -126,24 +126,24 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<bool> UpdateUser(User user, string role, string loggedId)
+    public async Task<bool> UpdateUserAsync(User user, string role, string loggedId)
     {
         if (role.Equals(CustomerRole))
         {
             if (loggedId.Equals(user.Id.ToString()))
             {
-                await UpdateUser(user);
+                await UpdateUserAsync(user);
                 return true;
             }
             else
                 return false;
         }
 
-        await UpdateUser(user);
+        await UpdateUserAsync(user);
         return true;
     }
 
-    public async Task DeleteUser(int id)
+    public async Task DeleteUserAsync(int id)
     {
         try
         {
@@ -156,24 +156,24 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<bool> DeleteUser(int id, string role, string loggedId)
+    public async Task<bool> DeleteUserAsync(int id, string role, string loggedId)
     {
         if (role.Equals(CustomerRole))
         {
             if (loggedId.Equals(id.ToString()))
             {
-                await DeleteUser(id);
+                await DeleteUserAsync(id);
                 return true;
             }
             else
                 return false;
         }
 
-        await DeleteUser(id);
+        await DeleteUserAsync(id);
         return true;
     }
 
-    public async Task<ValidationModel> GetValidatedUser(string login, string password)
+    public async Task<ValidationModel> GetValidatedUserAsync(string login, string password)
     {
         try
         {

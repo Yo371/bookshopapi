@@ -10,19 +10,19 @@ public interface IBookingService
 {
     Task<IEnumerable<Booking>> GetAllBookingsAsync();
 
-    Task<Booking> GetBooking(int id);
+    Task<Booking> GetBookingAsync(int id);
 
-    Task<Booking> GetBooking(int id, string role, string loggedId);
+    Task<Booking> GetBookingAsync(int id, string role, string loggedId);
 
-    Task UpdateBooking(Booking booking);
+    Task UpdateBookingAsync(Booking booking);
 
-    Task<bool> UpdateBooking(Booking booking, string role, string loggedId);
+    Task<bool> UpdateBookingAsync(Booking booking, string role, string loggedId);
 
-    Task CreateBooking(Booking booking);
+    Task CreateBookingAsync(Booking booking);
 
-    Task<bool> CreateBooking(Booking booking, string role, string loggedId);
+    Task<bool> CreateBookingAsync(Booking booking, string role, string loggedId);
 
-    Task<bool> DeleteBooking(int id, string role, string loggedId);
+    Task<bool> DeleteBookingAsync(int id, string role, string loggedId);
 }
 
 public class BookingService : IBookingService
@@ -52,7 +52,7 @@ public class BookingService : IBookingService
         }
     }
 
-    public async Task<Booking> GetBooking(int id)
+    public async Task<Booking> GetBookingAsync(int id)
     {
         try
         {
@@ -69,20 +69,20 @@ public class BookingService : IBookingService
         }
     }
 
-    public async Task<Booking> GetBooking(int id, string role, string loggedId)
+    public async Task<Booking> GetBookingAsync(int id, string role, string loggedId)
     {
         if (role.Equals(CustomerRole))
         {
             if (loggedId.Equals(id.ToString()))
-                return await GetBooking(id);
+                return await GetBookingAsync(id);
             else
                 return null;
         }
 
-        return await GetBooking(id);
+        return await GetBookingAsync(id);
     }
 
-    public async Task UpdateBooking(Booking booking)
+    public async Task UpdateBookingAsync(Booking booking)
     {
         try
         {
@@ -105,24 +105,24 @@ public class BookingService : IBookingService
         }
     }
 
-    public async Task<bool> UpdateBooking(Booking booking, string role, string loggedId)
+    public async Task<bool> UpdateBookingAsync(Booking booking, string role, string loggedId)
     {
         if (role.Equals(CustomerRole))
         {
             if (loggedId.Equals(booking.UserEntity.Id.ToString()))
             {
-                await UpdateBooking(booking);
+                await UpdateBookingAsync(booking);
                 return true;
             }
             else
                 return false;
         }
 
-        await UpdateBooking(booking);
+        await UpdateBookingAsync(booking);
         return true;
     }
 
-    public async Task CreateBooking(Booking booking)
+    public async Task CreateBookingAsync(Booking booking)
     {
         try
         {
@@ -146,24 +146,24 @@ public class BookingService : IBookingService
         }
     }
 
-    public async Task<bool> CreateBooking(Booking booking, string role, string loggedId)
+    public async Task<bool> CreateBookingAsync(Booking booking, string role, string loggedId)
     {
         if (role.Equals(CustomerRole))
         {
             if (loggedId.Equals(booking.UserEntity.Id.ToString()))
             {
-                await CreateBooking(booking);
+                await CreateBookingAsync(booking);
                 return true;
             }
             else
                 return false;
         }
 
-        await CreateBooking(booking);
+        await CreateBookingAsync(booking);
         return true;
     }
 
-    public async Task<bool> DeleteBooking(int id, string role, string loggedId)
+    public async Task<bool> DeleteBookingAsync(int id, string role, string loggedId)
     {
         try
         {

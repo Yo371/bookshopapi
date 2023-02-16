@@ -8,15 +8,15 @@ namespace BookshopApi.Services;
 
 public interface IStoreItemService
 {
-    Task<IEnumerable<Store>> GetAllStoreItems();
+    Task<IEnumerable<Store>> GetAllStoreItemsAsync();
 
-    Task<Store> GetStoreItem(int id);
+    Task<Store> GetStoreItemAsync(int id);
 
-    Task UpdateStoreItem(Store storeItemsEntity);
+    Task UpdateStoreItemAsync(Store storeItemsEntity);
 
-    Task CreateStoreItem(Store storeItemsEntity);
+    Task CreateStoreItemAsync(Store storeItemsEntity);
 
-    Task DeleteStoreItem(int id);
+    Task DeleteStoreItemAsync(int id);
 }
 
 public class StoreItemService : IStoreItemService
@@ -28,7 +28,7 @@ public class StoreItemService : IStoreItemService
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
     
-    public async Task<IEnumerable<Store>> GetAllStoreItems()
+    public async Task<IEnumerable<Store>> GetAllStoreItemsAsync()
     {
         try
         {
@@ -40,7 +40,7 @@ public class StoreItemService : IStoreItemService
         }
     }
     
-    public async Task<Store> GetStoreItem(int id)
+    public async Task<Store> GetStoreItemAsync(int id)
     {
         try
         {
@@ -53,7 +53,7 @@ public class StoreItemService : IStoreItemService
         }
     }
     
-    public async Task UpdateStoreItem(Store storeItem)
+    public async Task UpdateStoreItemAsync(Store storeItem)
     {
         try
         {
@@ -69,7 +69,7 @@ public class StoreItemService : IStoreItemService
         }
     }
     
-    public async Task CreateStoreItem(Store storeItem)
+    public async Task CreateStoreItemAsync(Store storeItem)
     {
         try
         {
@@ -85,7 +85,7 @@ public class StoreItemService : IStoreItemService
         }
     }
     
-    public async Task DeleteStoreItem(int id)
+    public async Task DeleteStoreItemAsync(int id)
     {
         try
         {

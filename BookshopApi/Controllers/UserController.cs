@@ -30,7 +30,7 @@ public class UserController : Controller
     {
         try
         {
-            var users = await _userService.GetAllUsers();
+            var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
         catch (Exception)
@@ -52,7 +52,7 @@ public class UserController : Controller
 
         try
         {
-            var user = await _userService.GetUser(id, role, loggedId);
+            var user = await _userService.GetUserAsync(id, role, loggedId);
             return user != null ? Ok(user) : StatusCode(403, "The user is not allowed to perform this action.");
         }
         catch (Exception)
@@ -74,7 +74,7 @@ public class UserController : Controller
 
         try
         {
-            var isUpdated = await _userService.UpdateUser(user, role, loggedId);
+            var isUpdated = await _userService.UpdateUserAsync(user, role, loggedId);
             
             return isUpdated
                 ? StatusCode(StatusCodes.Status202Accepted, "The user updated.")
@@ -99,13 +99,13 @@ public class UserController : Controller
             {
                 if (User.IsInRole("Admin"))
                 {
-                    await _userService.CreateUser(user);
+                    await _userService.CreateUserAsync(user);
                     return  StatusCode(StatusCodes.Status201Created, user);
                 }
             }
 
             user.Auth.Role = Role.Customer; 
-            await _userService.CreateUser(user);
+            await _userService.CreateUserAsync(user);
 
             return  StatusCode(StatusCodes.Status201Created, user);
         }
@@ -128,7 +128,7 @@ public class UserController : Controller
 
         try
         {
-            bool isDeleted = await _userService.DeleteUser(id, role, loggedId);
+            bool isDeleted = await _userService.DeleteUserAsync(id, role, loggedId);
             
             return isDeleted ? NoContent() : StatusCode(403, "The user is not allowed to perform this action.");
         }

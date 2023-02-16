@@ -33,7 +33,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader.Parameter)).Split(':');
             username = credentials.FirstOrDefault();
             var password = credentials.LastOrDefault();
-            userValidModel = await _userService.GetValidatedUser(username, password);
+            userValidModel = await _userService.GetValidatedUserAsync(username, password);
 
             if (!userValidModel.IsCredentialsMatched)
             {

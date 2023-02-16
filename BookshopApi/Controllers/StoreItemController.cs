@@ -24,7 +24,7 @@ public class StoreItemController : Controller
     {
         try
         {
-            var storeItems = await _storeItemService.GetAllStoreItems();
+            var storeItems = await _storeItemService.GetAllStoreItemsAsync();
             return Ok(storeItems);
         }
         catch (Exception)
@@ -41,7 +41,7 @@ public class StoreItemController : Controller
     {
         try
         {
-            var storeItem = await _storeItemService.GetStoreItem(id);
+            var storeItem = await _storeItemService.GetStoreItemAsync(id);
             return Ok(storeItem);
         }
         catch (Exception)
@@ -58,7 +58,7 @@ public class StoreItemController : Controller
     {
         try
         {
-            await _storeItemService.UpdateStoreItem(storeItemsEntity);
+            await _storeItemService.UpdateStoreItemAsync(storeItemsEntity);
             return StatusCode(StatusCodes.Status202Accepted, "The store item updated.");
         }
         catch (Exception)
@@ -75,7 +75,7 @@ public class StoreItemController : Controller
     {
         try
         {
-            await _storeItemService.CreateStoreItem(storeItemsEntity);
+            await _storeItemService.CreateStoreItemAsync(storeItemsEntity);
 
             return StatusCode(StatusCodes.Status201Created, storeItemsEntity);
         }
@@ -93,7 +93,7 @@ public class StoreItemController : Controller
     {
         try
         {
-            await _storeItemService.DeleteStoreItem(id);
+            await _storeItemService.DeleteStoreItemAsync(id);
             return NoContent();
         }
         catch (Exception)

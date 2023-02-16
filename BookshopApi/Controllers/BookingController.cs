@@ -50,7 +50,7 @@ public class BookingController : ControllerBase
 
         try
         {
-            var booking = await _bookingService.GetBooking(id, role, loggedId);
+            var booking = await _bookingService.GetBookingAsync(id, role, loggedId);
 
             return booking != null ? Ok(booking) : StatusCode(403, "The user is not allowed to perform this action.");
         }
@@ -73,7 +73,7 @@ public class BookingController : ControllerBase
 
         try
         {
-            var isUpdated = await _bookingService.UpdateBooking(bookingEntity, role, loggedId);
+            var isUpdated = await _bookingService.UpdateBookingAsync(bookingEntity, role, loggedId);
 
             return isUpdated
                 ? StatusCode(StatusCodes.Status202Accepted, "The booking updated.")
@@ -98,7 +98,7 @@ public class BookingController : ControllerBase
 
         try
         {
-            var isCreated = await _bookingService.CreateBooking(booking, role, loggedId);
+            var isCreated = await _bookingService.CreateBookingAsync(booking, role, loggedId);
 
             return isCreated
                 ? StatusCode(StatusCodes.Status201Created, booking)
@@ -123,7 +123,7 @@ public class BookingController : ControllerBase
 
         try
         {
-            bool isDeleted = await _bookingService.DeleteBooking(idOfBooking, role, loggedId);
+            bool isDeleted = await _bookingService.DeleteBookingAsync(idOfBooking, role, loggedId);
 
             return isDeleted ? NoContent() : StatusCode(403, "The user is not allowed to perform this action.");
         }
