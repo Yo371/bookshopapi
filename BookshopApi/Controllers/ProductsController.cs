@@ -1,5 +1,5 @@
-﻿using BookshopApi.Models;
-using BookshopApi.Services;
+﻿using BookshopApi.Services;
+using Commons.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,8 +20,8 @@ namespace BookshopApi.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager,Customer")]
         [Route("api/products/")]
         public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
@@ -37,8 +37,8 @@ namespace BookshopApi.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager,Customer")]
         [Route("api/products/{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -55,8 +55,8 @@ namespace BookshopApi.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(Product))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager")]
         [Route("api/products")]
         public async Task<ActionResult> UpdateProduct([FromBody] Product product)
@@ -73,8 +73,8 @@ namespace BookshopApi.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Product))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager")]
         [Route("api/products")]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
@@ -92,8 +92,8 @@ namespace BookshopApi.Controllers
         }
 
         [HttpDelete]
-        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(Product))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager")]
         [Route("api/products/{id:int}")]
         public async Task<IActionResult> DeleteProduct(int id)

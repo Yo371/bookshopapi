@@ -1,8 +1,6 @@
 ﻿using System.Security.Claims;
-using BookshopApi.Entities;
-using BookshopApi.Models;
 using BookshopApi.Services;
-using Mapster;
+using Commons.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,16 +20,15 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Authorize(Roles = "Admin")]
     [Route("api/users/")]
     public async Task<ActionResult<IEnumerable<User>>> GetAllUser()
     {
         try
         {
-            var users = await _userService.GetAllUsersAsync();
-            return Ok(users);
+            return Ok(await _userService.GetAllUsersAsync());
         }
         catch (Exception)
         {
@@ -40,9 +37,9 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize(Roles = "Admin,Customer")]
     [Route("api/users/{id:int}")]
     public async Task<ActionResult<User>> GetUser(int id)
@@ -53,7 +50,8 @@ public class UserController : Controller
         try
         {
             var user = await _userService.GetUserAsync(id, role, loggedId);
-            return user != null ? Ok(user) : StatusCode(403, "The user is not allowed to perform this action.");
+            return user != null ? Ok(user) : StatusCode(403, "The user is not allowed to perform this action." +
+                                                             $"or user with {id} doesn't exist.");
         }
         catch (Exception)
         {
@@ -62,9 +60,9 @@ public class UserController : Controller
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize(Roles = "Admin,Customer")]
     [Route("api/users")]
     public async Task<ActionResult> UpdateUser([FromBody]User user)
@@ -87,9 +85,9 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Route("api/users")]
     public async Task<ActionResult<User>> CreateUser([FromBody]User user)
     {
@@ -116,9 +114,9 @@ public class UserController : Controller
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize(Roles = "Admin,Customer")]
     [Route("api/users/{id:int}")]
     public async Task<ActionResult> DeleteUser(int id)

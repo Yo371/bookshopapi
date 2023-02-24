@@ -1,4 +1,4 @@
-﻿using BookshopApi.Models;
+﻿using Commons.Models;
 
 namespace Tests.Models;
 

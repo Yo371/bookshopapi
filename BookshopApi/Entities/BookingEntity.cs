@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using BookshopApi.Models;
 
 namespace BookshopApi.Entities;
 
@@ -11,10 +10,10 @@ public class BookingEntity
     public int Id { get; set; }
     
     [ForeignKey("product_id")]
-    public ProductEntity ProductEntity { get; set; }
+    public ProductEntity Product { get; set; }
     
     [ForeignKey("user_id")]
-    public UserEntity UserEntity { get; set; }
+    public UserEntity User { get; set; }
     
     [Column("delivery_address")]
     public string DeliveryAddress { get; set; }

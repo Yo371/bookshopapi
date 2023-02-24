@@ -1,4 +1,5 @@
 ﻿using BookshopApi.Entities;
+using Commons.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookshopApi.DataAccess;

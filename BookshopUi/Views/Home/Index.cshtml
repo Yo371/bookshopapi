@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Commons.Models.UserLogin
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <h1 class="display-4">Home page</h1>
+        <h2 class="display-6">@User.Identity.Name is Logged in</h2>
+    }
+    else
+    {
+        <br/>
+        <br/>
+        <h1 class="display-4">Bookshop Ui</h1>
+        <br/>
+        <form method="post">
+            <div class="border p-3 mt-4 w-50 mx-auto">
+                <div class="row pb-2">
+                    <h2 class="text-primary">Log In</h2>
+                    <hr/>
+                </div>
+                <div class="md-4">
+                    <label asp-for="Username"></label>
+                    <input asp-for="Username" class="form-control">
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="md-4">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <br/>
+                <button type="submit" class="btn btn-primary" style="width: 150px">Log in</button>
+
+                <div class="col-6">
+                    <a asp-controller="User" asp-action="Create" class="btn btn-link">
+                        <i class="bi bi-plus-circle"></i> &nbsp; Register
+                    </a>
+                </div>
+            </div>
+        </form>
+    }
+
+</div>

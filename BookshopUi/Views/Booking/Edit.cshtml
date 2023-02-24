@@ -1,0 +1,50 @@
+﻿@model Commons.Models.Booking
+
+<form method="post" asp-action="Edit">
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">Update Booking</h2>
+            <hr/>
+        </div>
+        <div class="md-3">
+            <label asp-for="User.Id">User Id</label>
+            <input asp-for="User.Id" class="form-control">
+            <span asp-validation-for="User.Id" class="text-danger"></span>
+        </div>
+        <div class="md-3">
+            <label asp-for="Product.Id">Product Id</label>
+            <input asp-for="Product.Id" class="form-control">
+            <span asp-validation-for="Product.Id" class="text-danger"></span>
+        </div>
+        <div class="md-3">
+            <label asp-for="DeliveryAddress"></label>
+            <input asp-for="DeliveryAddress" class="form-control">
+            <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+        </div>
+        <div class="md-3">
+            <label asp-for="DeliveryDate"></label>
+            <input asp-for="DeliveryDate" class="form-control">
+            <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+        </div>
+        <div class="md-3">
+            <label asp-for="DeliveryTime"></label>
+            <input asp-for="DeliveryTime" class="form-control">
+            <span asp-validation-for="DeliveryTime" class="text-danger"></span>
+        </div>
+        <div class="md-3">
+            <label asp-for="Quantity"></label>
+            <input asp-for="Quantity" class="form-control">
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+        <div class="md-3">
+            <label asp-for="BookingStatus.Status"></label>
+            <input asp-for="BookingStatus.Status" class="form-control">
+            <span asp-validation-for="BookingStatus.Status" class="text-danger"></span>
+        </div>
+        <br/> 
+        <button type="submit" class="btn btn-primary" style="width: 150px">Update</button>
+        <a asp-controller="Booking" asp-action="Index" class="btn btn-secondary" style="width: 150px">
+            Back to List
+        </a>
+    </div>
+</form>

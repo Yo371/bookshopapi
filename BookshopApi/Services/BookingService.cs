@@ -1,6 +1,6 @@
 ﻿using BookshopApi.DataAccess;
 using BookshopApi.Entities;
-using BookshopApi.Models;
+using Commons.Models;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +8,7 @@ namespace BookshopApi.Services;
 
 public interface IBookingService
 {
-    Task<IEnumerable<Booking>> GetAllBookingsAsync();
+    Task<IEnumerable<Booking>> GetAllBookingsAsync(int idOfRelatedToBookingUser = 0);
 
     Task<Booking> GetBookingAsync(int id);
 
@@ -36,15 +36,17 @@ public class BookingService : IBookingService
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<IEnumerable<Booking>> GetAllBookingsAsync()
+    public async Task<IEnumerable<Booking>> GetAllBookingsAsync(int idOfRelatedToBookingUser = 0)
     {
         try
         {
-            return await _context.Bookings.Include(e => e.BookingStatus)
-                .Include(e => e.ProductEntity)
-                .Include(e => e.UserEntity)
+            var allBookings = await _context.Bookings.Include(e => e.BookingStatus)
+                .Include(e => e.Product)
+                .Include(e => e.User)
                 .ThenInclude(e => e.Auth)
                 .Select(e => e.Adapt<Booking>()).ToListAsync();
+
+            return idOfRelatedToBookingUser != 0 ? allBookings.Where(e => e.User.Id == idOfRelatedToBookingUser) : allBookings;
         }
         catch (Exception ex)
         {
@@ -56,10 +58,12 @@ public class BookingService : IBookingService
     {
         try
         {
-            var bookingEnity = await _context.Bookings.Include(e => e.BookingStatus)
-                .Include(e => e.ProductEntity)
-                .Include(e => e.UserEntity)
-                .ThenInclude(e => e.Auth).FirstOrDefaultAsync(e => e.Id == id);
+            var bookingEnity = await _context.Bookings
+                .Include(e => e.BookingStatus)
+                .Include(e => e.Product)
+                .Include(e => e.User)
+                .ThenInclude(e => e.Auth)
+                .FirstOrDefaultAsync(e => e.Id == id);
 
             return bookingEnity.Adapt<Booking>();
         }
@@ -73,8 +77,9 @@ public class BookingService : IBookingService
     {
         if (role.Equals(CustomerRole))
         {
-            if (loggedId.Equals(id.ToString()))
-                return await GetBookingAsync(id);
+            var booking = await GetBookingAsync(id);
+            if (loggedId.Equals(booking.User.Id.ToString()))
+                return booking;
             else
                 return null;
         }
@@ -87,13 +92,13 @@ public class BookingService : IBookingService
         try
         {
             var bookingEntity = booking.Adapt<BookingEntity>();
-            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == bookingEntity.ProductEntity.Id);
-            var user = await _context.Users.FirstOrDefaultAsync(e => e.Id == bookingEntity.UserEntity.Id);
+            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == bookingEntity.Product.Id);
+            var user = await _context.Users.FirstOrDefaultAsync(e => e.Id == bookingEntity.User.Id);
             var bookingStatus =
                 await _context.BookingStatuses.FirstOrDefaultAsync(e => e.Status == bookingEntity.BookingStatus.Status);
 
-            bookingEntity.ProductEntity = product;
-            bookingEntity.UserEntity = user;
+            bookingEntity.Product = product;
+            bookingEntity.User = user;
             bookingEntity.BookingStatus = bookingStatus;
 
             _context.Bookings.Update(bookingEntity);
@@ -109,7 +114,7 @@ public class BookingService : IBookingService
     {
         if (role.Equals(CustomerRole))
         {
-            if (loggedId.Equals(booking.UserEntity.Id.ToString()))
+            if (loggedId.Equals(booking.User.Id.ToString()))
             {
                 await UpdateBookingAsync(booking);
                 return true;
@@ -127,13 +132,13 @@ public class BookingService : IBookingService
         try
         {
             var bookingEntity = booking.Adapt<BookingEntity>();
-            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == bookingEntity.ProductEntity.Id);
-            var user = await _context.Users.FirstOrDefaultAsync(e => e.Id == bookingEntity.UserEntity.Id);
+            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == bookingEntity.Product.Id);
+            var user = await _context.Users.FirstOrDefaultAsync(e => e.Id == bookingEntity.User.Id);
             var bookingStatus =
                 await _context.BookingStatuses.FirstOrDefaultAsync(e => e.Status == bookingEntity.BookingStatus.Status);
 
-            bookingEntity.ProductEntity = product;
-            bookingEntity.UserEntity = user;
+            bookingEntity.Product = product;
+            bookingEntity.User = user;
             bookingEntity.BookingStatus = bookingStatus;
 
             _context.Bookings.Add(bookingEntity);
@@ -150,7 +155,7 @@ public class BookingService : IBookingService
     {
         if (role.Equals(CustomerRole))
         {
-            if (loggedId.Equals(booking.UserEntity.Id.ToString()))
+            if (loggedId.Equals(booking.User.Id.ToString()))
             {
                 await CreateBookingAsync(booking);
                 return true;
@@ -170,7 +175,7 @@ public class BookingService : IBookingService
             var booking = await _context.Bookings.FindAsync(id);
             if (role.Equals(CustomerRole))
             {
-                if (loggedId.Equals(booking?.UserEntity.Id.ToString()))
+                if (loggedId.Equals(booking?.User.Id.ToString()))
                 {
                     booking.BookingStatus = new BookingStatusEntity() { Status = Status.Cancelled };
                     await _context.SaveChangesAsync();

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using BookshopApi.Entities;
-using BookshopApi.Models;
+using Commons.Models;
 
 namespace Tests.ApiTests;
 
@@ -25,6 +25,8 @@ public class Users : BaseTest
             Password = "123",
             Phone = 43534532
         };
+        
+        UserApiService.Authenticate(new UserLogin() { Username = "goga", Password = "123" });
     }
 
     [Test, Order(1)]

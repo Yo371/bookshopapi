@@ -2,9 +2,9 @@ using System.Text.Json.Serialization;
 using BookshopApi;
 using BookshopApi.DataAccess;
 using BookshopApi.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var configuration = new ConfigurationBuilder()
@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -26,6 +26,7 @@ builder.Services.AddScoped<IStoreItemService, StoreItemService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddMvc().AddJsonOptions(opts =>
 {
@@ -47,7 +48,59 @@ builder.Services.AddApiVersioning(e =>
     e.DefaultApiVersion = new ApiVersion(1, 0);
 });
 
+
+//jwt
 builder.Services.AddSwaggerGen(e =>
+{
+    e.EnableAnnotations();
+    e.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "BookshopAPI",
+        Version = "v1",
+        Description = "Description"
+    });
+
+    e.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+        In = ParameterLocation.Header, 
+        Description = "Please insert JWT with Bearer into field",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey 
+    });
+    e.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        { 
+            new OpenApiSecurityScheme 
+            { 
+                Reference = new OpenApiReference 
+                { 
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer" 
+                } 
+            },
+            new string[] { } 
+        } 
+    });
+});
+
+//jwt
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = AuthOptions.ISSUER,
+            ValidateAudience = true,
+            ValidAudience = AuthOptions.AUDIENCE,
+            ValidateLifetime = true,
+            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+            ValidateIssuerSigningKey = true,
+        };
+    });
+
+
+//basic
+/*builder.Services.AddSwaggerGen(e =>
 {
     e.EnableAnnotations();
     e.SwaggerDoc("v1", new OpenApiInfo
@@ -80,14 +133,17 @@ builder.Services.AddSwaggerGen(e =>
             new string[] { }
         }
     });
-});
+});*/
 
-builder.Services.AddAuthentication("BasicAuthentication")
+/*builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
 builder.Services.AddAuthorization(options =>
     options.AddPolicy("BasicAuthentication",
-        new AuthorizationPolicyBuilder("BasicAuthentication").RequireAuthenticatedUser().Build()));
+        new AuthorizationPolicyBuilder("BasicAuthentication").RequireAuthenticatedUser().Build()));*/
+
+
+
 builder.Services.AddControllers();
 builder.Services.AddRouting();
 

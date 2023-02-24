@@ -9,7 +9,6 @@ public class UserEntity
     [Key]
     public int Id { get; set; }
     
-    [Required]
     public string Name { get; set; }
     
     [ForeignKey("role_id")]
@@ -21,7 +20,6 @@ public class UserEntity
     
     public string Address { get; set; }
     
-    [Required]
     public string Login { get; set; }
     
     public string Password { get; set; }

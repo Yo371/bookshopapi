@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using BookshopApi.Models;
+using Commons.Models;
 
 namespace Tests.ApiTests;
 
@@ -18,6 +18,8 @@ public class Products : BaseTest
             ImagePath = "Path",
             Price = 12,
         };
+        
+        ProductApiService.Authenticate(new UserLogin() { Username = "manager", Password = "123" });
     }
     
     [Test, Order(1)]

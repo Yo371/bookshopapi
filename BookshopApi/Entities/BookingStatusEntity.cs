@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Commons.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

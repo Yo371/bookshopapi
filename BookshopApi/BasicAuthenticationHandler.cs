@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using BookshopApi.Models;
 using BookshopApi.Services;
+using Commons.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 
@@ -11,16 +11,16 @@ namespace BookshopApi;
 
 public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    private readonly IUserService _userService;
+    private readonly IAuthService _authService;
     
     public BasicAuthenticationHandler(
-        IUserService userService,
+        IAuthService authService,
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder, 
         ISystemClock clock) : base(options, logger, encoder, clock)
     {
-        _userService = userService;
+        _authService = authService;
     }
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -33,7 +33,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader.Parameter)).Split(':');
             username = credentials.FirstOrDefault();
             var password = credentials.LastOrDefault();
-            userValidModel = await _userService.GetValidatedUserAsync(username, password);
+            userValidModel = await _authService.GetValidatedUserAsync(username, password);
 
             if (!userValidModel.IsCredentialsMatched)
             {

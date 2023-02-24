@@ -1,5 +1,6 @@
 ﻿using BookshopApi.Entities;
 using BookshopApi.Services;
+using Commons.Models;
 
 namespace Tests.UnitTests;
 

@@ -1,6 +1,6 @@
 ﻿using BookshopApi.DataAccess;
-using BookshopApi.Models;
 using BookshopApi.Services;
+using Commons.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookshopApi.Controllers;
@@ -17,8 +17,8 @@ public class StoreItemController : Controller
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Store))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Store))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/storeitems/")]
     public async Task<ActionResult<IEnumerable<Store>>> GetAllStoreItems()
     {
@@ -34,8 +34,8 @@ public class StoreItemController : Controller
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Store))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Store))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/storeitems/{id}")]
     public async Task<ActionResult<Store>> GetStoreItem(int id)
     {
@@ -51,8 +51,8 @@ public class StoreItemController : Controller
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(Store))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Store))]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/storeitems")]
     public async Task<ActionResult> UpdateStoreItem([FromBody]Store storeItemsEntity)
     {
@@ -68,8 +68,8 @@ public class StoreItemController : Controller
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Store))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Store))]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/storeitems")]
     public async Task<ActionResult> CreateStoreItem([FromBody]Store storeItemsEntity)
     {
@@ -86,8 +86,8 @@ public class StoreItemController : Controller
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(Store))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Store))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/storeitems/{id:int}")]
     public async Task<ActionResult> DeleteStoreItem(int id)
     {

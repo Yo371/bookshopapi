@@ -1,8 +1,8 @@
 ﻿using System.Buffers.Text;
 using BookshopApi.DataAccess;
 using BookshopApi.Entities;
-using BookshopApi.Models;
 using BookshopApi.Utils;
+using Commons.Models;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,8 +25,6 @@ public interface IUserService
     Task DeleteUserAsync(int id);
 
     Task<bool> DeleteUserAsync(int id, string role, string loggedId);
-
-    Task<ValidationModel> GetValidatedUserAsync(string login, string password);
 }
 
 public class UserService : IUserService
@@ -44,8 +42,7 @@ public class UserService : IUserService
     {
         try
         {
-            return await _context.Users.Include(u => u.Auth)
-                .Select(u => u.Adapt<User>()).ToListAsync();
+            return (await _context.Users.Include(u => u.Auth).ToListAsync()).Adapt<IEnumerable<User>>();
         }
         catch (Exception ex)
         {
@@ -171,54 +168,5 @@ public class UserService : IUserService
 
         await DeleteUserAsync(id);
         return true;
-    }
-
-    public async Task<ValidationModel> GetValidatedUserAsync(string login, string password)
-    {
-        try
-        {
-            ValidationModel userValidModel;
-
-            if (_context.Users.Any(e => e.Login.Equals(login)))
-            {
-                var salt = (await _context.Users.FirstOrDefaultAsync(e => e.Login.Equals(login))).Salt;
-                var hashPasswordFromDb =
-                    (await _context.Users.FirstOrDefaultAsync(e => e.Login.Equals(login))).Password;
-
-                var isPasswordMathed = PasswordHelper.VerifyPassword(password, hashPasswordFromDb, salt);
-
-                if (isPasswordMathed)
-                {
-                    var userFromDb = await _context.Users
-                        .Include(u => u.Auth).FirstOrDefaultAsync(u => u.Login.Equals(login));
-                    userValidModel = new ValidationModel()
-                    {
-                        IsCredentialsMatched = true,
-                        Role = userFromDb.Auth.Role,
-                        Id = userFromDb.Id
-                    };
-                }
-                else
-                {
-                    userValidModel = new ValidationModel()
-                    {
-                        IsCredentialsMatched = false,
-                    };
-                }
-            }
-            else
-            {
-                userValidModel = new ValidationModel()
-                {
-                    IsCredentialsMatched = false,
-                };
-            }
-
-            return userValidModel;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"An error occurred while validating authorized user.", ex);
-        }
     }
 }

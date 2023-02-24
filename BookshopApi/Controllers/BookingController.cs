@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using BookshopApi.Models;
 using BookshopApi.Services;
+using Commons.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,15 +20,27 @@ public class BookingController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
-    [Authorize(Roles = "Manager")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings/")]
     public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings()
     {
         try
         {
-            var bookings = await _bookingService.GetAllBookingsAsync();
+            var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            
+            IEnumerable<Booking> bookings;
+            if (role.Equals(Role.Customer.ToString()))
+            {
+                bookings = await _bookingService.GetAllBookingsAsync(int.Parse(loggedId));
+            }
+            else
+            {
+                bookings = await _bookingService.GetAllBookingsAsync();
+            }
+             
             return Ok(bookings);
         }
         catch (Exception)
@@ -38,9 +50,9 @@ public class BookingController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings/{id}")]
     public async Task<ActionResult<Booking>> GetBooking(int id)
@@ -61,9 +73,9 @@ public class BookingController : ControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings")]
     public async Task<ActionResult> UpdateBooking([FromBody] Booking bookingEntity)
@@ -86,9 +98,9 @@ public class BookingController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings")]
     public async Task<ActionResult<Booking>> CreateBooking([FromBody] Booking booking)
@@ -111,19 +123,19 @@ public class BookingController : ControllerBase
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Booking))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Booking))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize(Roles = "Manager,Customer")]
     [Route("api/bookings/{id:int}")]
-    public async Task<ActionResult> DeleteBooking(int idOfBooking)
+    public async Task<ActionResult> DeleteBooking(int id)
     {
         var loggedId = User.FindFirstValue(ClaimTypes.SerialNumber);
         var role = User.FindFirstValue(ClaimTypes.Role);
 
         try
         {
-            bool isDeleted = await _bookingService.DeleteBookingAsync(idOfBooking, role, loggedId);
+            bool isDeleted = await _bookingService.DeleteBookingAsync(id, role, loggedId);
 
             return isDeleted ? NoContent() : StatusCode(403, "The user is not allowed to perform this action.");
         }
