@@ -1,4 +1,5 @@
 ﻿using Framework.Lib.Configuration;
+using Framework.Lib.Utils;
 using OpenQA.Selenium;
 using RPFramework.Core;
 
@@ -12,6 +13,7 @@ namespace Framework.Lib
 
         private static IWebDriver SetUpBrowser()
         {
+            var path = PathHelper.GetAssemblyFile("appsettings.json");
             var browserType = ConfigManager.BrowserOptions.BrowserType;
             var driver = browserType switch
             {

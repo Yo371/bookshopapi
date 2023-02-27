@@ -29,15 +29,5 @@ namespace Framework.Lib
             new WebDriverManager.DriverManager().SetUpDriver(new EdgeConfig());
             return new EdgeDriver();
         }
-
-        public static IWebDriver GetRemoteChromeDriver()
-        {
-            var chromeOptions = new ChromeOptions();
-            
-            new WebDriverManager.DriverManager().SetUpDriver(new ChromeConfig(),
-                VersionResolveStrategy.MatchingBrowser);
-            
-            return new RemoteWebDriver(new Uri(ConfigManager.BrowserOptions.SeleniumGridAddress), chromeOptions);
-        }
     }
 }

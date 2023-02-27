@@ -37,7 +37,7 @@
                         if (User.IsInRole("Manager") || User.IsInRole("Customer"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+                                <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index" id="product_link">Products</a>
                             </li>
 
                             <li class="nav-item">
@@ -49,8 +49,8 @@
                 </ul>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <div class="text-end" role="group">
-                        <a asp-controller="Home" asp-action="LogOut"><i class="bi bi-box-arrow-right"></i> Log out</a>
+                    <div class="mx-auto" role="group">
+                        <a asp-controller="Home" asp-action="LogOut" id="logout"><i class="bi bi-box-arrow-right"></i> Log out</a>
                     </div>
                 }
 

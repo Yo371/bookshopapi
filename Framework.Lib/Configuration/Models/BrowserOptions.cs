@@ -16,7 +16,7 @@ namespace Framework.Lib.Configuration.Models
         [JsonProperty(nameof(ImplicitWaitTimeOutMs))]
         public int ImplicitWaitTimeOutMs { get; set; }
 
-        [JsonProperty(nameof(SeleniumGridAddress))]
-        public string SeleniumGridAddress { get; set; }
+        [JsonProperty(nameof(BookshopUrl))]
+        public string BookshopUrl { get; set; }
     }
 }

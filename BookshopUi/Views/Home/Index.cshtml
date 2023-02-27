@@ -26,17 +26,17 @@
                 </div>
                 <div class="md-4">
                     <label asp-for="Username"></label>
-                    <input asp-for="Username" class="form-control">
+                    <input asp-for="Username" class="form-control" id="login">
                     <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
                 <div class="md-4">
                     <label asp-for="Password"></label>
-                    <input asp-for="Password" class="form-control">
+                    <input asp-for="Password" class="form-control" id="password">
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
                 <br/>
-                <button type="submit" class="btn btn-primary" style="width: 150px">Log in</button>
+                <button type="submit" class="btn btn-primary" style="width: 150px" id="btnLogin">Log in</button>
 
                 <div class="col-6">
                     <a asp-controller="User" asp-action="Create" class="btn btn-link">

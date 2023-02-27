@@ -24,6 +24,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BookshopApi\BookshopApi.csproj" />
+      <ProjectReference Include="..\Framework.Lib\Framework.Lib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
