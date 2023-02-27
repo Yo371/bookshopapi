@@ -53,7 +53,7 @@ public class UserController : BookShopController
         if (ModelState.IsValid)
         {
             _userApiService.PostUser(user);
-            TempData["success"] = "Product created successfully";
+            TempData["success"] = "User created successfully";
 
             if (!User.Identity.IsAuthenticated)
             {
