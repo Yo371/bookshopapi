@@ -15,10 +15,4 @@
     <ProjectReference Include="..\Commons\Commons.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models" />
-    <Folder Include="Pages" />
-    <Folder Include="Pages\" />
-  </ItemGroup>
-
 </Project>
