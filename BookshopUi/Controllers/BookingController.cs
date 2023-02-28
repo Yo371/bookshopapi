@@ -17,23 +17,22 @@ public class BookingController : BookShopController
         _bookingApiService.SetClient(new RestClient(Constants.ApiUrl));
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        if (ValidationModel.IsCredentialsMatched)
-        {
-            IEnumerable<Booking> allBookings;
-            _bookingApiService.AddTokenToHeader(ValidationModel.Token);
-            if (ValidationModel.Role.Equals(Role.Manager))
-            {
-                allBookings = _bookingApiService.GetAllBookings();
-                return View(allBookings);
-            }
+        IEnumerable<Booking> allBookings;
 
-            if (ValidationModel.Role.Equals(Role.Customer))
-            {
-                allBookings = _bookingApiService.GetAllBookings(ValidationModel.Id);
-                return View(allBookings);
-            }
+        if (IsManager)
+        {
+            _bookingApiService.AddTokenToHeader(ValidationModel.Token);
+            allBookings = await _bookingApiService.GetAllBookings();
+            return View(allBookings);
+        }
+
+        if (IsCustomer)
+        {
+            _bookingApiService.AddTokenToHeader(ValidationModel.Token);
+            allBookings = await _bookingApiService.GetAllBookings(ValidationModel.Id);
+            return View(allBookings);
         }
 
         return RedirectToAction("Forbidden", "User");
@@ -41,7 +40,7 @@ public class BookingController : BookShopController
 
     public IActionResult Create()
     {
-        if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+        if (IsManager)
         {
             return View();
         }
@@ -51,22 +50,22 @@ public class BookingController : BookShopController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(Booking booking)
+    public async Task<IActionResult> Create(Booking booking)
     {
-        if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+        if (IsManager)
         {
             _bookingApiService.AddTokenToHeader(ValidationModel.Token);
-            _bookingApiService.PostBooking(booking);
-            TempData["success"] = "Booking created successfully";
-            return RedirectToAction("Index");
+            await _bookingApiService.PostBooking(booking);
+            SuccessNotification("Booking created successfully");
+            return RedirectToAction(nameof(Index));
         }
 
         return RedirectToAction("Forbidden", "User");
     }
 
-    public IActionResult Edit(int id)
+    public async Task<IActionResult> Edit(int id)
     {
-        if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+        if (IsManager)
         {
             if (id == 0)
             {
@@ -74,7 +73,7 @@ public class BookingController : BookShopController
             }
 
             _bookingApiService.AddTokenToHeader(ValidationModel.Token);
-            var bookingFromDb = _bookingApiService.GetBooking(id);
+            var bookingFromDb = await _bookingApiService.GetBooking(id);
             if (bookingFromDb == null)
             {
                 return NotFound();
@@ -88,22 +87,22 @@ public class BookingController : BookShopController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(Booking booking)
+    public async Task<IActionResult> Edit(Booking booking)
     {
-        if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+        if (IsManager)
         {
             _bookingApiService.AddTokenToHeader(ValidationModel.Token);
-            _bookingApiService.UpdateBooking(booking);
-            TempData["success"] = "Booking updated successfully";
-            return RedirectToAction("Index");
+            await _bookingApiService.UpdateBooking(booking);
+            SuccessNotification("Booking updated successfully");
+            return RedirectToAction(nameof(Index));
         }
 
         return RedirectToAction("Forbidden", "User");
     }
 
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+        if (IsManager)
         {
             if (id == 0)
             {
@@ -111,7 +110,7 @@ public class BookingController : BookShopController
             }
 
             _bookingApiService.AddTokenToHeader(ValidationModel.Token);
-            var bookingFromDb = _bookingApiService.GetBooking(id);
+            var bookingFromDb = await _bookingApiService.GetBooking(id);
             if (bookingFromDb == null)
             {
                 return NotFound();
@@ -125,21 +124,22 @@ public class BookingController : BookShopController
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public IActionResult DeletePost(int id)
+    public async Task<IActionResult> DeletePost(int id)
     {
-        if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+        if (IsManager)
         {
             _bookingApiService.AddTokenToHeader(ValidationModel.Token);
-            var productFromDb = _bookingApiService.GetBooking(id);
+            var productFromDb = await _bookingApiService.GetBooking(id);
             if (productFromDb == null)
             {
                 return NotFound();
             }
 
-            _bookingApiService.DeleteBooking(id);
-            TempData["success"] = "Booking delete successfully";
-            return RedirectToAction("Index");
+            await _bookingApiService.DeleteBooking(id);
+            SuccessNotification("Booking deleted successfully");
+            return RedirectToAction(nameof(Index));
         }
+
         return RedirectToAction("Forbidden", "User");
     }
 }

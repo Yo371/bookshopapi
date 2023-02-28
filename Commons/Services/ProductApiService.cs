@@ -7,21 +7,16 @@ namespace Commons.Services;
 
 public interface IProductApiService : IAuthApiService
 {
-    Product GetProduct(int id);
+    Task<Product> GetProduct(int id);
 
-    IEnumerable<Product> GetAllProducts();
-    RestResponse PostProduct(Product product);
-    RestResponse UpdateProduct(Product product);
-    RestResponse DeleteProduct(int id);
-    string Authenticate(UserLogin userLogin);
+    Task<IEnumerable<Product>> GetAllProducts();
+    Task<RestResponse> PostProduct(Product product);
+    Task<RestResponse> UpdateProduct(Product product);
+    Task<RestResponse> DeleteProduct(int id);
 }
 
 public class ProductApiService : BookShopApiServiceBase, IProductApiService
 {
-    public ProductApiService(RestClient client, string login, string password) : base(client, login, password)
-    {
-    }
-
     public ProductApiService(RestClient client) : base(client)
     {
     }
@@ -30,27 +25,27 @@ public class ProductApiService : BookShopApiServiceBase, IProductApiService
     {
     }
 
-    public Product GetProduct(int id)
+    public async Task<Product> GetProduct(int id)
     {
         var restRequest = new RestRequest($"/Products/api/products/{id}");
-        var restResponse = Client.Execute(restRequest, Method.Get);
+        var restResponse = await Client.ExecuteAsync(restRequest, Method.Get);
 
         return JsonConvert.DeserializeObject<Product>(restResponse.Content);
     }
     
-    public IEnumerable<Product> GetAllProducts()
+    public async Task<IEnumerable<Product>> GetAllProducts()
     {
         var restRequest = new RestRequest($"/Products/api/products/");
-        var restResponse = Client.Execute(restRequest, Method.Get);
+        var restResponse = await Client.ExecuteAsync(restRequest, Method.Get);
 
         return JsonConvert.DeserializeObject<IEnumerable<Product>>(restResponse.Content);
     }
     
-    public RestResponse PostProduct(Product product)
+    public async Task<RestResponse> PostProduct(Product product)
     {
         var restRequest = new RestRequest("/Products/api/products");
         restRequest.AddJsonBody(product);
-        var restResponse = Client.Execute(restRequest, Method.Post);
+        var restResponse = await Client.ExecuteAsync(restRequest, Method.Post);
 
         var jObj = JObject.Parse(restResponse.Content);
 
@@ -59,17 +54,17 @@ public class ProductApiService : BookShopApiServiceBase, IProductApiService
         return restResponse;
     }
     
-    public RestResponse UpdateProduct(Product product)
+    public async Task<RestResponse> UpdateProduct(Product product)
     {
         var request = new RestRequest($"/Products/api/products");
             
         request.AddJsonBody(product);
-        return Client.Execute(request, Method.Put);
+        return await Client.ExecuteAsync(request, Method.Put);
     }
     
-    public RestResponse DeleteProduct(int id)
+    public async Task<RestResponse> DeleteProduct(int id)
     {
         var restRequest = new RestRequest($"/Products/api/products/{id}");
-        return Client.Execute(restRequest, Method.Delete);
+        return await Client.ExecuteAsync(restRequest, Method.Delete);
     }
 }

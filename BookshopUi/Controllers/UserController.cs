@@ -17,28 +17,25 @@ public class UserController : BookShopController
         _userApiService.SetClient(new RestClient(Constants.ApiUrl));
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         IEnumerable<User> userList;
-
-        if (ValidationModel.IsCredentialsMatched)
+        if (IsAdmin)
         {
             _userApiService.AddTokenToHeader(ValidationModel.Token);
-            if (ValidationModel.Role.Equals(Role.Admin))
-            {
-                userList = _userApiService.GetAllUsers();
-                return View(userList);
-            }
-
-            if (ValidationModel.Role.Equals(Role.Customer))
-            {
-                var user = _userApiService.GetUser(ValidationModel.Id);
-                userList = new List<User>() { user };
-                return View(userList);
-            }
+            userList = await _userApiService.GetAllUsers();
+            return View(userList);
         }
 
-        return RedirectToAction("Forbidden");
+        if (IsCustomer)
+        {
+            _userApiService.AddTokenToHeader(ValidationModel.Token);
+            var user = await _userApiService.GetUser(ValidationModel.Id);
+            userList = new List<User>() { user };
+            return View(userList);
+        }
+
+        return RedirectToAction(nameof(Forbidden));
     }
 
     public IActionResult Create()
@@ -48,38 +45,38 @@ public class UserController : BookShopController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(User user)
+    public async Task<IActionResult> Create(User user)
     {
         if (ModelState.IsValid)
         {
-            _userApiService.PostUser(user);
-            TempData["success"] = "User created successfully";
+            await _userApiService.PostUser(user);
+            SuccessNotification("User created successfully");
 
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(Index), "Home");
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         return View(user);
     }
 
-    public IActionResult Edit(int id)
+    public async Task<IActionResult> Edit(int id)
     {
         if (id == 0)
         {
             return NotFound();
         }
 
-        if (ValidationModel.IsCredentialsMatched)
+        if (IsAdmin || IsCustomer)
         {
-            if (ValidationModel.Role.Equals(Role.Customer) && ValidationModel.Id != id)
-                return RedirectToAction("Forbidden");
+            if (IsCustomer && ValidationModel.Id != id)
+                return RedirectToAction(nameof(Forbidden));
 
             _userApiService.AddTokenToHeader(ValidationModel.Token);
-            var userFromDb = _userApiService.GetUser(id);
+            var userFromDb = await _userApiService.GetUser(id);
             if (userFromDb == null)
             {
                 return NotFound();
@@ -93,33 +90,33 @@ public class UserController : BookShopController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(User user)
+    public async Task<IActionResult> Edit(User user)
     {
-        if (ValidationModel.IsCredentialsMatched && ModelState.IsValid)
+        if ((IsAdmin || IsCustomer) && ModelState.IsValid)
         {
             _userApiService.AddTokenToHeader(ValidationModel.Token);
-            _userApiService.UpdateUser(user);
-            TempData["success"] = "User updated successfully";
-            return RedirectToAction("Index");
+            await _userApiService.UpdateUser(user);
+            SuccessNotification("User updated successfully");
+            return RedirectToAction(nameof(Index));
         }
 
         return View(user);
     }
 
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         if (id == 0)
         {
             return NotFound();
         }
 
-        if (ValidationModel.IsCredentialsMatched)
+        if (IsAdmin || IsCustomer)
         {
-            if (ValidationModel.Role.Equals(Role.Customer) && ValidationModel.Id != id)
+            if (IsCustomer && ValidationModel.Id != id)
                 return RedirectToAction("Forbidden");
 
             _userApiService.AddTokenToHeader(ValidationModel.Token);
-            var userFromDb = _userApiService.GetUser(id);
+            var userFromDb = await _userApiService.GetUser(id);
             if (userFromDb == null)
             {
                 return NotFound();
@@ -133,18 +130,25 @@ public class UserController : BookShopController
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public IActionResult DeletePost(int id)
+    public async Task<IActionResult> DeletePost(int id)
     {
-        _userApiService.AddTokenToHeader(ValidationModel.Token);
-        var userFromDb = _userApiService.GetUser(id);
-        if (userFromDb == null)
+        if (IsAdmin || IsCustomer)
         {
-            return NotFound();
+            if (IsCustomer && ValidationModel.Id != id)
+                return RedirectToAction("Forbidden");
+            _userApiService.AddTokenToHeader(ValidationModel.Token);
+            var userFromDb = await _userApiService.GetUser(id);
+            if (userFromDb == null)
+            {
+                return NotFound();
+            }
+
+            await _userApiService.DeleteUser(id);
+            SuccessNotification("User deleted successfully");
+            return RedirectToAction(nameof(Index));
         }
 
-        _userApiService.DeleteUser(id);
-        TempData["success"] = "User deleted successfully";
-        return RedirectToAction("Index");
+        return Unauthorized();
     }
 
     public IActionResult Forbidden()

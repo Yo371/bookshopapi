@@ -17,13 +17,12 @@ namespace BookshopUi.Controllers
             _productApiService.SetClient(new RestClient(Constants.ApiUrl));
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            if (ValidationModel.IsCredentialsMatched &&
-                (ValidationModel.Role.Equals(Role.Manager) || ValidationModel.Role.Equals(Role.Customer)))
+            if (IsManager || IsCustomer)
             {
                 _productApiService.AddTokenToHeader(ValidationModel.Token);
-                var productsList = _productApiService.GetAllProducts();
+                var productsList = await _productApiService.GetAllProducts();
                 return View(productsList);
             }
 
@@ -32,7 +31,7 @@ namespace BookshopUi.Controllers
 
         public IActionResult Create()
         {
-            if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+            if (IsManager)
             {
                 return View();
             }
@@ -42,16 +41,16 @@ namespace BookshopUi.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Product product)
+        public async Task<IActionResult> Create(Product product)
         {
-            if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+            if (IsManager)
             {
                 if (ModelState.IsValid)
                 {
                     _productApiService.AddTokenToHeader(ValidationModel.Token);
-                    _productApiService.PostProduct(product);
-                    TempData["success"] = "Product created successfully";
-                    return RedirectToAction("Index");
+                    await _productApiService.PostProduct(product);
+                    SuccessNotification("Product created successfully");
+                    return RedirectToAction(nameof(Index));
                 }
 
                 return View(product);
@@ -60,9 +59,9 @@ namespace BookshopUi.Controllers
             return RedirectToAction("Forbidden", "User");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+            if (IsManager)
             {
                 if (id == 0)
                 {
@@ -70,7 +69,7 @@ namespace BookshopUi.Controllers
                 }
 
                 _productApiService.AddTokenToHeader(ValidationModel.Token);
-                var productFromDb = _productApiService.GetProduct(id);
+                var productFromDb = await _productApiService.GetProduct(id);
                 if (productFromDb == null)
                 {
                     return NotFound();
@@ -84,16 +83,16 @@ namespace BookshopUi.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Product product)
+        public async Task<IActionResult> Edit(Product product)
         {
-            if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+            if (IsManager)
             {
                 if (ModelState.IsValid)
                 {
                     _productApiService.AddTokenToHeader(ValidationModel.Token);
-                    _productApiService.UpdateProduct(product);
-                    TempData["success"] = "Product updated successfully";
-                    return RedirectToAction("Index");
+                    await _productApiService.UpdateProduct(product);
+                    SuccessNotification("Product updated successfully");
+                    return RedirectToAction(nameof(Index));
                 }
 
                 return View(product);
@@ -102,9 +101,9 @@ namespace BookshopUi.Controllers
             return RedirectToAction("Forbidden", "User");
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+            if (IsManager)
             {
                 if (id == 0)
                 {
@@ -112,7 +111,7 @@ namespace BookshopUi.Controllers
                 }
 
                 _productApiService.AddTokenToHeader(ValidationModel.Token);
-                var productFromDb = _productApiService.GetProduct(id);
+                var productFromDb = await _productApiService.GetProduct(id);
                 if (productFromDb == null)
                 {
                     return NotFound();
@@ -126,20 +125,20 @@ namespace BookshopUi.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePost(int id)
+        public async Task<IActionResult> DeletePost(int id)
         {
-            if (ValidationModel.IsCredentialsMatched && ValidationModel.Role.Equals(Role.Manager))
+            if (IsManager)
             {
                 _productApiService.AddTokenToHeader(ValidationModel.Token);
-                var productFromDb = _productApiService.GetProduct(id);
+                var productFromDb = await _productApiService.GetProduct(id);
                 if (productFromDb == null)
                 {
                     return NotFound();
                 }
                 
-                _productApiService.DeleteProduct(id);
-                TempData["success"] = "Product delete successfully";
-                return RedirectToAction("Index");
+                await _productApiService.DeleteProduct(id);
+                SuccessNotification("Product delete successfully");
+                return RedirectToAction(nameof(Index));
             }
 
             return RedirectToAction("Forbidden", "User");

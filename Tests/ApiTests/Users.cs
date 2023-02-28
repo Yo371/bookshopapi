@@ -1,6 +1,4 @@
-﻿using System.Net;
-using BookshopApi.Entities;
-using Commons.Models;
+﻿using Commons.Models;
 
 namespace Tests.ApiTests;
 
@@ -32,26 +30,26 @@ public class Users : BaseTest
     [Test, Order(1)]
     public void VerifyCreatingNewUser()
     {
-        Assert.That(UserApiService.PostUser(_user).IsSuccessful, Is.True);
+        Assert.That(UserApiService.PostUser(_user).Result.IsSuccessful, Is.True);
     }
     
     [Test, Order(2)]
     public void VerifyGettingCreatedUser()
     {
-        Assert.That(UserApiService.GetUser(_user.Id), Is.EqualTo(_user));
+        Assert.That(UserApiService.GetUser(_user.Id).Result, Is.EqualTo(_user));
     }
     
     [Test, Order(3)]
     public void VerifyUpdatingExistedUser()
     {
         _user.Name = "Updated";
-        Assert.That(UserApiService.UpdateUser(_user).IsSuccessful, Is.True);
-        Assert.That(UserApiService.GetUser(_user.Id), Is.EqualTo(_user));
+        Assert.That(UserApiService.UpdateUser(_user).Result.IsSuccessful, Is.True);
+        Assert.That(UserApiService.GetUser(_user.Id).Result, Is.EqualTo(_user));
     }
     
     [Test, Order(4)]
     public void VerifyDeletingExistedUser()
     {
-        Assert.That(UserApiService.DeleteUser(_user.Id).IsSuccessful, Is.True);
+        Assert.That(UserApiService.DeleteUser(_user.Id).Result.IsSuccessful, Is.True);
     }
 }

@@ -7,20 +7,15 @@ namespace Commons.Services;
 
 public interface IBookingApiService : IAuthApiService
 {
-    Booking GetBooking(int id);
-    IEnumerable<Booking> GetAllBookings(int idOfRelatedToBookingUser = 0);
-    RestResponse PostBooking(Booking booking);
-    RestResponse UpdateBooking(Booking booking);
-    RestResponse DeleteBooking(int id);
-    string Authenticate(UserLogin userLogin);
+    Task<Booking> GetBooking(int id);
+    Task<IEnumerable<Booking>> GetAllBookings(int idOfRelatedToBookingUser = 0);
+    Task<RestResponse> PostBooking(Booking booking);
+    Task<RestResponse> UpdateBooking(Booking booking);
+    Task<RestResponse> DeleteBooking(int id);
 }
 
 public class BookingApiService : BookShopApiServiceBase, IBookingApiService
 {
-    public BookingApiService(RestClient client, string login, string password) : base(client, login, password)
-    {
-    }
-
     public BookingApiService(RestClient client) : base(client)
     {
     }
@@ -29,29 +24,31 @@ public class BookingApiService : BookShopApiServiceBase, IBookingApiService
     {
     }
 
-    public Booking GetBooking(int id)
+    public async Task<Booking> GetBooking(int id)
     {
         var restRequest = new RestRequest($"/Booking/api/bookings/{id}");
-        var restResponse = Client.Execute(restRequest, Method.Get);
+        var restResponse = await Client.ExecuteAsync(restRequest, Method.Get);
 
         return JsonConvert.DeserializeObject<Booking>(restResponse.Content);
     }
     
-    public IEnumerable<Booking> GetAllBookings(int idOfRelatedToBookingUser = 0)
+    public async Task<IEnumerable<Booking>> GetAllBookings(int idOfRelatedToBookingUser = 0)
     {
+        
         var restRequest = new RestRequest($"/Booking/api/bookings/");
-        var restResponse = Client.Execute(restRequest, Method.Get);
+        
+        var restResponse = await Client.ExecuteAsync(restRequest, Method.Get);
 
         var allBookings = JsonConvert.DeserializeObject<IEnumerable<Booking>>(restResponse.Content);
 
         return idOfRelatedToBookingUser != 0 ? allBookings.Where(e => e.User.Id == idOfRelatedToBookingUser) : allBookings;
     }
     
-    public RestResponse PostBooking(Booking booking)
+    public async Task<RestResponse> PostBooking(Booking booking)
     {
         var restRequest = new RestRequest("/Booking/api/bookings");
         restRequest.AddJsonBody(booking);
-        var restResponse = Client.Execute(restRequest, Method.Post);
+        var restResponse = await Client.ExecuteAsync(restRequest, Method.Post);
 
         var jObj = JObject.Parse(restResponse.Content);
 
@@ -60,17 +57,17 @@ public class BookingApiService : BookShopApiServiceBase, IBookingApiService
         return restResponse;
     }
     
-    public RestResponse UpdateBooking(Booking booking)
+    public async Task<RestResponse> UpdateBooking(Booking booking)
     {
         var request = new RestRequest($"/Booking/api/bookings");
             
         request.AddJsonBody(booking);
-        return Client.Execute(request, Method.Put);
+        return await Client.ExecuteAsync(request, Method.Put);
     }
     
-    public RestResponse DeleteBooking(int id)
+    public async Task<RestResponse> DeleteBooking(int id)
     {
         var restRequest = new RestRequest($"/Booking/api/bookings/{id}");
-        return Client.Execute(restRequest, Method.Delete);
+        return await Client.ExecuteAsync(restRequest, Method.Delete);
     }
 }

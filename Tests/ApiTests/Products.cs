@@ -27,29 +27,29 @@ public class Products : BaseTest
     public void VerifyCreatingNewProduct()
     {
         var response = ProductApiService.PostProduct(_product);
-        Assert.That(response.IsSuccessful, Is.True);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+        Assert.That(response.Result.IsSuccessful, Is.True);
+        Assert.That(response.Result.StatusCode, Is.EqualTo(HttpStatusCode.Created));
     }
     
     [Test, Order(2)]
     public void VerifyGettingCreatedProduct()
     {
-        Assert.That(ProductApiService.GetProduct(_product.Id), Is.EqualTo(_product));
+        Assert.That(ProductApiService.GetProduct(_product.Id).Result, Is.EqualTo(_product));
     }
     
     [Test, Order(3)]
     public void VerifyUpdatingExistedProduct()
     {
         _product.Name = "Updated";
-        Assert.That(ProductApiService.UpdateProduct(_product).IsSuccessful, Is.True);
-        Assert.That(ProductApiService.GetProduct(_product.Id), Is.EqualTo(_product));
+        Assert.That(ProductApiService.UpdateProduct(_product).Result.IsSuccessful, Is.True);
+        Assert.That(ProductApiService.GetProduct(_product.Id).Result, Is.EqualTo(_product));
     }
     
     [Test, Order(4)]
     public void VerifyDeletingExistedProduct()
     {
         var response = ProductApiService.DeleteProduct(_product.Id);
-        Assert.That(response.IsSuccessful, Is.True);
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        Assert.That(response.Result.IsSuccessful, Is.True);
+        Assert.That(response.Result.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
     }
 }

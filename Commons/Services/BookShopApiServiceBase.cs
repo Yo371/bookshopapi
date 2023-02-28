@@ -1,5 +1,4 @@
 ﻿using Commons.Models;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -14,14 +13,6 @@ public interface IBookShopApiServiceBase
 public class BookShopApiServiceBase : IBookShopApiServiceBase
 {
     protected RestClient Client;
-
-    public BookShopApiServiceBase(RestClient client, string login, string password)
-    {
-        Client = client;
-
-        //Client.Authenticator = new HttpBasicAuthenticator(login, password);
-        Client.AddDefaultHeader("accept", "text/plain");
-    }
     
     public BookShopApiServiceBase(RestClient client)
     {
