@@ -4,6 +4,7 @@ using Commons.Models;
 
 namespace Tests.UnitTests;
 
+[TestFixture]
 public class ValidationRole : BaseTest
 {
     private IUserService _userService;

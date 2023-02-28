@@ -3,6 +3,7 @@ using Commons.Models;
 
 namespace Tests.ApiTests;
 
+[TestFixture]
 public class Products : BaseTest
 {
     private Product _product;

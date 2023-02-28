@@ -2,6 +2,7 @@
 
 namespace Tests.UiTests;
 
+[TestFixture]
 public class ProductTest : BaseTest
 {
     [SetUp]
