@@ -45,7 +45,7 @@ public class BookingController : ControllerBase
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while getting the booking.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the booking.");
         }
     }
 
@@ -68,7 +68,7 @@ public class BookingController : ControllerBase
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while getting the booking.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the booking.");
         }
     }
 
@@ -89,11 +89,11 @@ public class BookingController : ControllerBase
 
             return isUpdated
                 ? StatusCode(StatusCodes.Status202Accepted, "The booking updated.")
-                : StatusCode(403, "The user is not allowed to perform this action.");
+                : StatusCode(StatusCodes.Status403Forbidden, "The user is not allowed to perform this action.");
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while creating the booking.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the booking.");
         }
     }
 
@@ -114,11 +114,11 @@ public class BookingController : ControllerBase
 
             return isCreated
                 ? StatusCode(StatusCodes.Status201Created, booking)
-                : StatusCode(403, "The user is not allowed to perform this action.");
+                : StatusCode(StatusCodes.Status403Forbidden, "The user is not allowed to perform this action.");
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while creating the booking.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the booking.");
         }
     }
 
@@ -141,7 +141,7 @@ public class BookingController : ControllerBase
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while deleting the booking.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the booking.");
         }
     }
 }

@@ -29,7 +29,7 @@ public class StoreItemController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while getting the store items.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the store items.");
         }
     }
 
@@ -46,7 +46,7 @@ public class StoreItemController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while getting the store item.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the store item.");
         }
     }
 
@@ -63,7 +63,7 @@ public class StoreItemController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while updating the store item.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the store item.");
         }
     }
 
@@ -81,7 +81,7 @@ public class StoreItemController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while creating the store item.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the store item.");
         }
     }
 
@@ -98,7 +98,7 @@ public class StoreItemController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while deleting the store item.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the store item.");
         }
     }
 }

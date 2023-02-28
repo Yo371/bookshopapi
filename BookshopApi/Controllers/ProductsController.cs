@@ -32,7 +32,7 @@ namespace BookshopApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while getting the products.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the products.");
             }
         }
 
@@ -50,7 +50,7 @@ namespace BookshopApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while getting the product.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the product.");
             }
         }
 
@@ -68,7 +68,7 @@ namespace BookshopApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while updating the product.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the product.");
             }
         }
 
@@ -87,7 +87,7 @@ namespace BookshopApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while creating the product.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the product.");
             }
         }
 
@@ -105,7 +105,7 @@ namespace BookshopApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while deleting the product.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the product.");
             }
         }
     }

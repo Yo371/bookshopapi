@@ -32,7 +32,7 @@ public class UserController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while getting the users.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the users.");
         }
     }
 
@@ -55,7 +55,7 @@ public class UserController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while getting the user.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the user.");
         }
     }
 
@@ -80,7 +80,7 @@ public class UserController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while updating the user.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the user.");
         }
     }
 
@@ -109,7 +109,7 @@ public class UserController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while creating the user.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the user.");
         }
     }
 
@@ -132,7 +132,7 @@ public class UserController : Controller
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while deleting the user.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the user.");
         }
     }
 }

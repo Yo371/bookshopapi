@@ -20,32 +20,41 @@ public class AccountController : Controller
     }
     
     [HttpPost()]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/token")]
     public async Task<IActionResult> Token([FromBody] UserLogin userLogin)
     {
-        var identity = await GetIdentity(userLogin.Username, userLogin.Password);
-        if (identity == null)
+        try
         {
-            return BadRequest(new { errorText = "Invalid username or password." });
-        }
- 
-        var now = DateTime.UtcNow;
+            var identity = await GetIdentity(userLogin.Username, userLogin.Password);
+            if (identity == null)
+            {
+                return BadRequest(new { errorText = "Invalid username or password." });
+            }
 
-        var jwt = new JwtSecurityToken(
-            issuer: AuthOptions.ISSUER,
-            audience: AuthOptions.AUDIENCE,
-            notBefore: now,
-            claims: identity.Claims,
-            expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-        var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
- 
-        var response = new
+            var now = DateTime.UtcNow;
+
+            var jwt = new JwtSecurityToken(
+                issuer: AuthOptions.ISSUER,
+                audience: AuthOptions.AUDIENCE,
+                notBefore: now,
+                claims: identity.Claims,
+                expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),
+                    SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            var response = new
+            {
+                access_token = encodedJwt,
+            };
+
+            return Json(response);
+        }
+        catch(Exception e)
         {
-            access_token = encodedJwt,
-        };
- 
-        return Json(response);
+            return StatusCode(StatusCodes.Status500InternalServerError, "Can't generate token.");
+        }
     }
  
     private async Task<ClaimsIdentity> GetIdentity(string username, string password)
