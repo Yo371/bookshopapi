@@ -11,13 +11,9 @@ node {
     }
   }
   stage('Build Stage') {
-    steps {
-        bat 'dotnet build'
-    }
+    bat 'dotnet build'
   }
   stage('Test Stage') {
-    steps {
-        bat 'dotnet test --filter FullyQualifiedName~Tests.UnitTests.ValidationRole'
-    }
+    bat 'dotnet test --filter FullyQualifiedName~Tests.UnitTests.ValidationRole'
   }
 }
