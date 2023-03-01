@@ -1,9 +1,7 @@
-﻿using Framework.Lib.Configuration;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Remote;
 using WebDriverManager.DriverConfigs.Impl;
 using WebDriverManager.Helpers;
 

@@ -1,7 +1,6 @@
 ﻿using Framework.Lib.Configuration;
 using Framework.Lib.Utils;
 using OpenQA.Selenium;
-using RPFramework.Core;
 
 namespace Framework.Lib
 {
