@@ -8,7 +8,7 @@ namespace Framework.Lib.Pages;
 public class PageBase
 {
     protected IWebDriver browser;
-    public static int LoadTimeout = 3000;
+    public static readonly int LoadTimeout = 3000;
 
     public Element ProductLink => new Element(By.XPath("//a[@id='product_link']"));
 
