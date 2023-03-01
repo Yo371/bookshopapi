@@ -11,9 +11,14 @@ namespace Framework.Lib
     {
         public static IWebDriver GetChromeDriver()
         {
+            
             new WebDriverManager.DriverManager().SetUpDriver(new ChromeConfig(),
                 VersionResolveStrategy.MatchingBrowser);
-            return new ChromeDriver();
+            
+            var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArguments("headless");
+            chromeOptions.AddArguments("window-size=1900,1200");
+            return new ChromeDriver(chromeOptions);
         }
 
         public static IWebDriver GetFirefoxDriver()

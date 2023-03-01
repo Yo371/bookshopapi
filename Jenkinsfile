@@ -13,7 +13,10 @@ node {
       bat "dotnet ${scannerHome}\\SonarScanner.MSBuild.dll end"
     }
   }
-  stage('Test Stage') {
-    bat 'dotnet test --filter FullyQualifiedName~Tests.UnitTests.ValidationRole'
+  stage('Unit Test Stage') {
+    bat 'dotnet test --filter FullyQualifiedName~Tests.UnitTests'
+  }
+  stage('API Test Stage') {
+     bat 'dotnet test --filter FullyQualifiedName~Tests.ApiTests'
   }
 }
