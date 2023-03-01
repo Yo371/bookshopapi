@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading;
-using Framework.Lib;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace RPFramework.Core.Utils
+namespace Framework.Lib.Utils
 {
     public class Wait
     {

@@ -1,6 +1,5 @@
 ﻿using Framework.Lib.Configuration;
 using OpenQA.Selenium;
-using RPFramework.Core.Utils;
 using SeleniumExtras.WaitHelpers;
 
 namespace Framework.Lib.Pages;

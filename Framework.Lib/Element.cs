@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Drawing;
+using Framework.Lib.Utils;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
-using RPFramework.Core.Utils;
 using SeleniumExtras.WaitHelpers;
 
 namespace Framework.Lib

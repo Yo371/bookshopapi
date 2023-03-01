@@ -2,7 +2,6 @@
 using Framework.Lib.Utils;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using RPFramework.Core.Utils;
 
 namespace Framework.Lib.Configuration
 {
