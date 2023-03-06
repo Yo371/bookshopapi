@@ -13,7 +13,7 @@ public class BookingController : BookShopController
     public BookingController(IBookingApiService bookingApiService, IValidationService validationService) : base(
         validationService)
     {
-        _bookingApiService = bookingApiService;
+        _bookingApiService = bookingApiService ?? throw new ArgumentNullException(nameof(bookingApiService)); ;
         _bookingApiService.SetClient(new RestClient(Constants.ApiUrl));
     }
 

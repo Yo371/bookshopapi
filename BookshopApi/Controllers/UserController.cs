@@ -3,6 +3,7 @@ using BookshopApi.Services;
 using Commons.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace BookshopApi.Controllers;
 
@@ -12,11 +13,13 @@ namespace BookshopApi.Controllers;
 public class UserController : Controller
 {
     private readonly IUserService _userService;
+    private readonly ILogger<UserController> _logger;
 
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService,  ILogger<UserController> logger)
     {
         _userService = userService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -30,9 +33,10 @@ public class UserController : Controller
         {
             return Ok(await _userService.GetAllUsersAsync());
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the users.");
+            _logger.LogError(ex, $"An error occurred while getting the users.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 
@@ -53,9 +57,10 @@ public class UserController : Controller
             return user != null ? Ok(user) : StatusCode(403, "The user is not allowed to perform this action." +
                                                              $"or user with {id} doesn't exist.");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the user.");
+            _logger.LogError(ex, $"An error occurred while getting the user with id = {id}.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 
@@ -78,9 +83,10 @@ public class UserController : Controller
                 ? StatusCode(StatusCodes.Status202Accepted, "The user updated.")
                 : StatusCode(403, "The user is not allowed to perform this action.");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the user.");
+            _logger.LogError(ex, "An error occurred while updating the user.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 
@@ -107,16 +113,17 @@ public class UserController : Controller
 
             return  StatusCode(StatusCodes.Status201Created, user);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the user.");
+            _logger.LogError(ex, "An error occurred while creating the user.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize(Roles = "Admin,Customer")]
     [Route("api/users/{id:int}")]
     public async Task<ActionResult> DeleteUser(int id)
@@ -127,12 +134,21 @@ public class UserController : Controller
         try
         {
             bool isDeleted = await _userService.DeleteUserAsync(id, role, loggedId);
-            
-            return isDeleted ? NoContent() : StatusCode(403, "The user is not allowed to perform this action.");
+
+            if (isDeleted)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the user.");
+            }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the user.");
+            _logger.LogError(ex, $"An error occurred while deleting the user with id = {id}.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
+
 }
