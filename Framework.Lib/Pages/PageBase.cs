@@ -21,7 +21,7 @@ public class PageBase
 
     public void Open()
     {
-        var url = ConfigManager.BrowserOptions.BookshopUrl;
+        var url = ConfigManager.Options.BookshopUrl;
         browser.Navigate().GoToUrl(url);
     }
 

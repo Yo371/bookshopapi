@@ -10,8 +10,8 @@ namespace Framework.Lib.Configuration
         public static IConfiguration Configuration =>
             new ConfigurationBuilder().AddJsonFile(PathHelper.GetAssemblyFile("appsettings.json")).Build();
 
-        [JsonProperty(nameof(BrowserOptions))]
-        public static BrowserOptions BrowserOptions { get; set; }
+        [JsonProperty(nameof(Options))]
+        public static Options Options { get; set; }
 
         public static string? GetProperty(string section, string key) => Configuration.GetSection(section)[key];
         

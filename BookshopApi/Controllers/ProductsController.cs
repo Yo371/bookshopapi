@@ -40,12 +40,13 @@ namespace BookshopApi.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager,Customer")]
+        [Route("api/products/{id:int}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             try
@@ -112,11 +113,12 @@ namespace BookshopApi.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager")]
+        [Route("api/products/{id:int}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             try

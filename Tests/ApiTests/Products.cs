@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Commons.Models;
+using Framework.Lib.Configuration;
 
 namespace Tests.ApiTests;
 
@@ -34,6 +35,7 @@ public class Products : BaseTest
     [Test, Order(2)]
     public void VerifyGettingCreatedProduct()
     {
+        var product = ProductApiService.GetProduct(_product.Id).Result;
         Assert.That(ProductApiService.GetProduct(_product.Id).Result, Is.EqualTo(_product));
     }
     

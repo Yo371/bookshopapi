@@ -13,7 +13,7 @@ namespace Framework.Lib
         private static IWebDriver SetUpBrowser()
         {
             var path = PathHelper.GetAssemblyFile("appsettings.json");
-            var browserType = ConfigManager.BrowserOptions.BrowserType;
+            var browserType = ConfigManager.Options.BrowserType;
             var driver = browserType switch
             {
                 "Chrome" => BrowserFactory.GetChromeDriver(),
@@ -22,9 +22,9 @@ namespace Framework.Lib
                 _ => throw new ArgumentException()
             };
 
-            var pageLoadTimeout = ConfigManager.BrowserOptions.PageLoadTimeOutMs;
-            var jsTimeout = ConfigManager.BrowserOptions.AsyncJsTimeoutMs;
-            var implicitTimeout = ConfigManager.BrowserOptions.ImplicitWaitTimeOutMs;
+            var pageLoadTimeout = ConfigManager.Options.PageLoadTimeOutMs;
+            var jsTimeout = ConfigManager.Options.AsyncJsTimeoutMs;
+            var implicitTimeout = ConfigManager.Options.ImplicitWaitTimeOutMs;
 
             driver.Manage().Window.Maximize();
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromMilliseconds(pageLoadTimeout);

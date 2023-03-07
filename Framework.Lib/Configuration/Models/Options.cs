@@ -2,7 +2,7 @@
 
 namespace Framework.Lib.Configuration.Models
 {
-    public class BrowserOptions
+    public class Options
     {
         [JsonProperty(nameof(BrowserType))]
         public string BrowserType { get; set; }
@@ -18,5 +18,8 @@ namespace Framework.Lib.Configuration.Models
 
         [JsonProperty(nameof(BookshopUrl))]
         public string BookshopUrl { get; set; }
+        
+        [JsonProperty(nameof(BookshopUrlApi))]
+        public string BookshopUrlApi { get; set; }
     }
 }
