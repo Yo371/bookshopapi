@@ -12,11 +12,13 @@ namespace BookshopApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private IProductService _productService;
+        private readonly IProductService _productService;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, ILogger<ProductsController> logger)
         {
             _productService = productService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -28,34 +30,47 @@ namespace BookshopApi.Controllers
         {
             try
             {
-                return Ok(await _productService.GetAllProductsAsync());
+                var products = await _productService.GetAllProductsAsync();
+                return Ok(products);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the products.");
+                _logger.LogError(ex, "An error occurred while getting the products.");
+                return StatusCode(StatusCodes.Status500InternalServerError,  ex.Message);
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager,Customer")]
-        [Route("api/products/{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             try
             {
+                if (id < 1)
+                {
+                    return BadRequest("Invalid ID");
+                }
                 var product = await _productService.GetProductAsync(id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
                 return Ok(product);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the product.");
+                _logger.LogError(ex, $"An error occurred while getting the product with id = {id}.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager")]
         [Route("api/products")]
@@ -63,12 +78,17 @@ namespace BookshopApi.Controllers
         {
             try
             {
+                if (product == null || product.Id <= 0)
+                {
+                    return BadRequest("Invalid store item data.");
+                }
                 await _productService.UpdateProductAsync(product);
                 return StatusCode(StatusCodes.Status202Accepted, "The product updated.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the product.");
+                _logger.LogError(ex, "An error occurred while updating the product.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -85,27 +105,34 @@ namespace BookshopApi.Controllers
 
                 return StatusCode(StatusCodes.Status201Created, product);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the product.");
+                _logger.LogError(ex, "An error occurred while creating the product.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "Manager")]
-        [Route("api/products/{id:int}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             try
             {
+                var product = await _productService.GetProductAsync(id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
                 await _productService.DeleteProductAsync(id);
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the product.");
+                _logger.LogError(ex, $"An error occurred while deleting the product with id = {id}.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

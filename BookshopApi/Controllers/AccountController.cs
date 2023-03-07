@@ -13,13 +13,17 @@ public class AccountController : Controller
 {
     
     private readonly IAuthService _authService;
-    
-    public AccountController(IAuthService authService)
+    private readonly ILogger<AccountController> _logger;
+
+    public AccountController(IAuthService authService, ILogger<AccountController> logger)
     {
-        _authService = authService;
+        _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+        //Thrown exception in case of null
+        _logger = logger;
     }
     
     [HttpPost()]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/token")]
     public async Task<IActionResult> Token([FromBody] UserLogin userLogin)
@@ -35,11 +39,11 @@ public class AccountController : Controller
             var now = DateTime.UtcNow;
 
             var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.ISSUER,
-                audience: AuthOptions.AUDIENCE,
+                issuer: AuthOptions.Issuer,
+                audience: AuthOptions.Audience,
                 notBefore: now,
                 claims: identity.Claims,
-                expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                expires: now.Add(TimeSpan.FromMinutes(AuthOptions.TokenExpirationMinutes)),
                 signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),
                     SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -51,9 +55,10 @@ public class AccountController : Controller
 
             return Json(response);
         }
-        catch(Exception e)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Can't generate token.");
+            _logger.LogError(ex, "Can't generate token.");
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
  
@@ -61,7 +66,8 @@ public class AccountController : Controller
     {
         var person = await _authService.GetValidatedUserAsync(username, password);
 
-        if (person.IsCredentialsMatched)
+        if (person?.IsCredentialsMatched ?? false)
+        //Add a null check to the "person"  to ensure that the code doesn't throw exception
         {
             var claims = new[]
             {
