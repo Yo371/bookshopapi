@@ -1,0 +1,6 @@
+docker-compose -p reportportal up -d --force-recreate
+
+docker-compose -f docker-compose.yml up
+
+1) wsl -d docker-desktop
+2) sysctl -w vm.max_map_count=262144

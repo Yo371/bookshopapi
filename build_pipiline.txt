@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    environment {
+        dotnet = 'C:\\Program Files\\dotnet\\dotnet.exe'
+    }
+    stages {
+        stage('Checkout Stage') {
+            steps {
+                git credentialsId: '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', url: 'https://github.com/Yo371/bookshopapi/', branch: 'main'
+            }
+        }
+        stage('Build Stage') {
+            steps {
+                bat 'dotnet build'
+            }
+        }
+        stage('Test Stage') {
+            steps {
+                bat 'dotnet test --filter FullyQualifiedName~Tests.UnitTests.ValidationRole'
+            }
+        
+        
+    }
+}
